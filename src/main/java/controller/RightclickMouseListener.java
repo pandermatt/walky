@@ -16,14 +16,12 @@ import java.awt.event.MouseListener;
  */
 class RightclickMouseListener implements MouseListener, Resetable {
 
-    private final Map map; //the current user-map
-    private boolean isDragging = false;
-
     /**
      * Creates a new RightclickMouseListener
      */
     public RightclickMouseListener() {
-        map = ApplicationSingletone.getCurrentMap();
+        //the current user-map
+        Map map = ApplicationSingletone.getCurrentMap();
 
     }
 
@@ -56,7 +54,7 @@ class RightclickMouseListener implements MouseListener, Resetable {
 
     @Override
     public void reset() {
-        isDragging = false;
+        boolean isDragging = false;
     }
 
     private void displayPopup(MouseEvent e) {

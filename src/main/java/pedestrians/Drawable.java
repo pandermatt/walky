@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public abstract class Drawable implements Serializable {
 
     protected ArrayList<Polygon> currentEdges;
-    private final Polygon originEdges;
     boolean selected;
     //location
     protected double x;
@@ -29,7 +28,6 @@ public abstract class Drawable implements Serializable {
     protected Drawable(Color color) {
         this.color = color;
         this.currentEdges = null;
-        this.originEdges = null;
         this.selected = false;
     }
 

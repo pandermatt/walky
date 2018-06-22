@@ -19,7 +19,6 @@ import static main.java.controller.PedestrianController.getConvertedMousePositio
  */
 class RectangleWallToolMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
-    private final Map map; //the current user-map
     private Rectangle temporaryWall = null; //the wall that should be added to the map later
 
     private Point firstClick = null; //a wall is only added after the second click
@@ -28,7 +27,8 @@ class RectangleWallToolMouseListener implements MouseListener, MouseMotionListen
      * Creates temporaryWall new BorderToolMouseListener
      */
     public RectangleWallToolMouseListener() {
-        map = ApplicationSingletone.getCurrentMap();
+        //the current user-map
+        Map map = ApplicationSingletone.getCurrentMap();
         temporaryWall = null;
     }
 

@@ -34,14 +34,12 @@ class NodeLocation {
      * Returns the comperator to compare two NodeLocations (used for sorting)
      */
     public static Comparator<NodeLocation> getComperator() {
-        return new Comparator<NodeLocation>() {
-            public int compare(NodeLocation o1, NodeLocation o2) {
-                //use id for comparation
-                if (o1.getId().equals(o2.getId())) {
-                    return 0;
-                }
-                return o1.getId().compareTo(o2.getId());
+        return (o1, o2) -> {
+            //use id for comparation
+            if (o1.getId().equals(o2.getId())) {
+                return 0;
             }
+            return o1.getId().compareTo(o2.getId());
         };
     }
 

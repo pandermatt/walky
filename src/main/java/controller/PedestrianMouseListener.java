@@ -19,13 +19,12 @@ import static main.java.controller.PedestrianController.getConvertedMousePositio
  */
 class PedestrianMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
-    private final Map map; //the current user-map
-
     /**
      * Creates a new PedestrianMouseListener
      */
     public PedestrianMouseListener() {
-        map = ApplicationSingletone.getCurrentMap();
+        //the current user-map
+        Map map = ApplicationSingletone.getCurrentMap();
     }
 
     /*Implemented Methods. For documentation see the corresponding Interface-class e.g. MouseListener, MouseMotionListener or Resetable*/

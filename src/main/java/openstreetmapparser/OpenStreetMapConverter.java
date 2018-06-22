@@ -5,7 +5,6 @@ import main.java.mapElements.Wall;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**

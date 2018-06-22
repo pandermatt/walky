@@ -99,22 +99,10 @@ public class PedestrianBehaviour implements Serializable {
             //minimalDistancePoint
 
             //for x
-            if (pedestrian.currentLocation.x == minimalDistancePoint.x) {
-                xDifference = 0;
-            } else if (pedestrian.currentLocation.x > minimalDistancePoint.x) {
-                xDifference = -1;
-            } else {
-                xDifference = 1;
-            }
+            xDifference = Integer.compare(minimalDistancePoint.x, pedestrian.currentLocation.x);
 
             //for y
-            if (pedestrian.currentLocation.y == minimalDistancePoint.y) {
-                yDifference = 0;
-            } else if (pedestrian.currentLocation.y > minimalDistancePoint.y) {
-                yDifference = -1;
-            } else {
-                yDifference = 1;
-            }
+            yDifference = Integer.compare(minimalDistancePoint.y, pedestrian.currentLocation.y);
 
             //try to make the best step
             return tryToMakeStep(xDifference, yDifference, currentMap, minimalDistancePoint, false);

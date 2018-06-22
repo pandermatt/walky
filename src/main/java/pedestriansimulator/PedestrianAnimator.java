@@ -16,7 +16,6 @@ public class PedestrianAnimator {
 
     //settings
     private final Map currentMap;
-    private final int FRAMES_PER_SECOND = 130;
     private volatile boolean isStopped;
     private boolean wait;
     private int frameCount = 0;
@@ -59,6 +58,7 @@ public class PedestrianAnimator {
 
         if (wait) {
             try {
+                int FRAMES_PER_SECOND = 130;
                 Thread.sleep(1000 / FRAMES_PER_SECOND); //sleep is optional
             } catch (InterruptedException ex) {
                 //sleep was interrupted

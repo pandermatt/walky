@@ -3,8 +3,6 @@ package main.java.gui;
 import main.java.pedestriansimulator.ApplicationSingletone;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * A PopUpMenu shows up when the user clicks the right mouse-button. The choice

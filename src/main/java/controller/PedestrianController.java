@@ -75,13 +75,14 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
             currentMouseListener = wallTool;
         } else if (toolbox.isSquareSelected()) {
             currentMouseListener = squareTool;
-        } else if (toolbox.isShiftSelected()) {
-        } else if (toolbox.isSelectionToolSelected()) {
-            selectionTool.extendMode = (currentPressedKey != null && currentPressedKey == 16);
-            currentMouseListener = selectionTool;
+        } else if (!toolbox.isShiftSelected()) {
+            if (toolbox.isSelectionToolSelected()) {
+                selectionTool.extendMode = (currentPressedKey != null && currentPressedKey == 16);
+                currentMouseListener = selectionTool;
 
-        } else if (toolbox.isMarkGoalSelected()) {
-            currentMouseListener = markGoalTool;
+            } else if (toolbox.isMarkGoalSelected()) {
+                currentMouseListener = markGoalTool;
+            }
         }
 
         //reset all the MouseListener that are not selected
