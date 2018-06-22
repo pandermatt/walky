@@ -467,5 +467,4 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
 
         }
     }
-
 }

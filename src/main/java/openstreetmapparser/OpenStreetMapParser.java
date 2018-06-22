@@ -227,7 +227,7 @@ class OpenStreetMapParser {
      * Reads the xml into the application.
      */
     private File getRessource() throws URISyntaxException, IOException {
-        String orginalPath = "ressourcen/" + filename; //build filname
+        String orginalPath = "maps/" + filename; //build filname
         return getFile(orginalPath); //open file
     }
 
