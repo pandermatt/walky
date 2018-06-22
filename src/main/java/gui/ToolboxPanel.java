@@ -112,7 +112,8 @@ public class ToolboxPanel extends javax.swing.JPanel {
 
         jPanel2.setLayout(new java.awt.GridLayout(13, 1));
 
-        toggleStart.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        Font lucida_grande = new Font("Lucida Grande", Font.BOLD, 13);
+        toggleStart.setFont(lucida_grande); // NOI18N
         toggleStart.setText("Start");
         toggleStart.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         toggleStart.setIconTextGap(10);
@@ -120,43 +121,44 @@ public class ToolboxPanel extends javax.swing.JPanel {
         toggleStart.addActionListener(evt -> toggleStartActionPerformed());
         jPanel2.add(toggleStart);
 
-        toggleClear.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleClear.setFont(lucida_grande); // NOI18N
         toggleClear.setText("Clear");
-        toggleClear.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        int alignment = SwingConstants.LEFT;
+        toggleClear.setHorizontalAlignment(alignment);
         toggleClear.setIconTextGap(10);
         toggleClear.setPreferredSize(new java.awt.Dimension(76, 60));
         toggleClear.addActionListener(evt -> toggleClearActionPerformed());
         jPanel2.add(toggleClear);
 
-        toggleRecord.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleRecord.setFont(lucida_grande); // NOI18N
         toggleRecord.setText("Record");
-        toggleRecord.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleRecord.setHorizontalAlignment(alignment);
         toggleRecord.setIconTextGap(10);
         toggleRecord.setPreferredSize(new java.awt.Dimension(138, 60));
         toggleRecord.addActionListener(evt -> toggleRecordActionPerformed());
         jPanel2.add(toggleRecord);
 
-        toggleReset.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleReset.setFont(lucida_grande); // NOI18N
         toggleReset.setText("Reset");
-        toggleReset.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleReset.setHorizontalAlignment(alignment);
         toggleReset.setIconTextGap(10);
         toggleReset.setPreferredSize(new java.awt.Dimension(154, 60));
         toggleReset.addActionListener(evt -> toggleResetActionPerformed());
         jPanel2.add(toggleReset);
 
         buttonGroup1.add(toggleFreehand);
-        toggleFreehand.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleFreehand.setFont(lucida_grande); // NOI18N
         toggleFreehand.setText("Wall: Freehand");
-        toggleFreehand.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleFreehand.setHorizontalAlignment(alignment);
         toggleFreehand.setIconTextGap(10);
         toggleFreehand.setPreferredSize(new java.awt.Dimension(75, 60));
         toggleFreehand.addActionListener(evt -> toggleFreehandActionPerformed());
         jPanel2.add(toggleFreehand);
 
         buttonGroup1.add(toggleWall);
-        toggleWall.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleWall.setFont(lucida_grande); // NOI18N
         toggleWall.setText("Rectangle Wall");
-        toggleWall.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleWall.setHorizontalAlignment(alignment);
         toggleWall.setIconTextGap(10);
         toggleWall.setPreferredSize(new java.awt.Dimension(116, 60));
         toggleWall.addActionListener(evt -> toggleWallActionPerformed());
@@ -165,9 +167,9 @@ public class ToolboxPanel extends javax.swing.JPanel {
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         buttonGroup1.add(togglePedestrian);
-        togglePedestrian.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        togglePedestrian.setFont(lucida_grande); // NOI18N
         togglePedestrian.setText("Pedestrian");
-        togglePedestrian.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        togglePedestrian.setHorizontalAlignment(alignment);
         togglePedestrian.setIconTextGap(10);
         togglePedestrian.setPreferredSize(new java.awt.Dimension(109, 60));
         togglePedestrian.addActionListener(evt -> togglePedestrianActionPerformed());
@@ -180,53 +182,53 @@ public class ToolboxPanel extends javax.swing.JPanel {
         jPanel2.add(jPanel1);
 
         buttonGroup1.add(toggleBorder);
-        toggleBorder.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleBorder.setFont(lucida_grande); // NOI18N
         toggleBorder.setText("Border");
-        toggleBorder.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleBorder.setHorizontalAlignment(alignment);
         toggleBorder.setIconTextGap(10);
         toggleBorder.setPreferredSize(new java.awt.Dimension(84, 60));
         toggleBorder.addActionListener(evt -> toggleBorderActionPerformed());
         jPanel2.add(toggleBorder);
 
         buttonGroup1.add(toggleSelectionTool);
-        toggleSelectionTool.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleSelectionTool.setFont(lucida_grande); // NOI18N
         toggleSelectionTool.setText("Select");
-        toggleSelectionTool.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleSelectionTool.setHorizontalAlignment(alignment);
         toggleSelectionTool.setIconTextGap(10);
         toggleSelectionTool.setPreferredSize(new java.awt.Dimension(81, 60));
         toggleSelectionTool.addActionListener(evt -> toggleSelectionToolActionPerformed());
         jPanel2.add(toggleSelectionTool);
 
         buttonGroup1.add(toggleShift);
-        toggleShift.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleShift.setFont(lucida_grande); // NOI18N
         toggleShift.setText("Shift");
-        toggleShift.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleShift.setHorizontalAlignment(alignment);
         toggleShift.setIconTextGap(10);
         toggleShift.setPreferredSize(new java.awt.Dimension(75, 60));
         toggleShift.addActionListener(evt -> toggleShiftActionPerformed());
         jPanel2.add(toggleShift);
 
-        toggleResetZoom.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleResetZoom.setFont(lucida_grande); // NOI18N
         toggleResetZoom.setText("Reset Zoom");
-        toggleResetZoom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleResetZoom.setHorizontalAlignment(alignment);
         toggleResetZoom.setIconTextGap(10);
         toggleResetZoom.setPreferredSize(new java.awt.Dimension(118, 60));
         toggleResetZoom.addActionListener(evt -> toggleResetZoomActionPerformed());
         jPanel2.add(toggleResetZoom);
 
         buttonGroup1.add(toggleSetTarget);
-        toggleSetTarget.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleSetTarget.setFont(lucida_grande); // NOI18N
         toggleSetTarget.setSelected(true);
         toggleSetTarget.setText("Set Target");
-        toggleSetTarget.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleSetTarget.setHorizontalAlignment(alignment);
         toggleSetTarget.setIconTextGap(10);
         toggleSetTarget.setPreferredSize(new java.awt.Dimension(95, 60));
         toggleSetTarget.addActionListener(evt -> toggleSetTargetActionPerformed());
         jPanel2.add(toggleSetTarget);
 
-        toggleSettings.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        toggleSettings.setFont(lucida_grande); // NOI18N
         toggleSettings.setText("Graphic Settings");
-        toggleSettings.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        toggleSettings.setHorizontalAlignment(alignment);
         toggleSettings.setIconTextGap(10);
         toggleSettings.setPreferredSize(new java.awt.Dimension(118, 60));
         toggleSettings.addActionListener(evt -> toggleSettingsActionPerformed());
