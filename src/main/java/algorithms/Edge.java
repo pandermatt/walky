@@ -10,7 +10,8 @@ import java.io.Serializable;
  */
 public class Edge implements Serializable, Cloneable {
 
-    private final Node targetNode;     private final double weight; //the weight is used by the DijkstraAlgorithm
+    private final Node targetNode;
+    private final double weight; //the weight is used by the DijkstraAlgorithm
 
     /**
      * Creates a new {@code Edge} with a given target and weight;
@@ -31,12 +32,12 @@ public class Edge implements Serializable, Cloneable {
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Edge e = new Edge((Node) targetNode.clone(), weight);
-        return e;
+        Object o = super.clone();
+        return new Edge((Node) targetNode.clone(), weight);
     }
 
     /* Setter and Getter */
-    
+
     public Node getTargetNode() {
         return targetNode;
     }

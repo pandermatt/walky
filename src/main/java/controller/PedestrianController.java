@@ -1,10 +1,11 @@
 package main.java.controller;
 
-import main.java.gui.*;
-import java.awt.*;
-import java.awt.event.*;
+import main.java.gui.ToolboxPanel;
 import main.java.pedestriansimulator.ApplicationSingletone;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * Reacts to Mouse- and Keyboardactions and decides to which MouseListener the
@@ -15,23 +16,23 @@ import main.java.pedestriansimulator.Map;
 public class PedestrianController implements MouseListener, MouseMotionListener, KeyListener {
 
     /*All possible MouseListener*/
-    RightclickMouseListener rightClickTool;
-    BorderToolMouseListener borderTool;
-    PedestrianMouseListener pedestrianTool;
-    WallToolMouseListener wallTool;
-    RectangleWallToolMouseListener squareTool;
-    SelectionToolMouseListener selectionTool;
-    MarkGoalToolMouseListener markGoalTool;
+    private final RightclickMouseListener rightClickTool;
+    private final BorderToolMouseListener borderTool;
+    private final PedestrianMouseListener pedestrianTool;
+    private final WallToolMouseListener wallTool;
+    private final RectangleWallToolMouseListener squareTool;
+    private final SelectionToolMouseListener selectionTool;
+    private final MarkGoalToolMouseListener markGoalTool;
 
     /*The mouseListener that is currently selected*/
-    MouseListener currentMouseListener;
+    private MouseListener currentMouseListener;
 
     /*The current toolbox where the user can select a tool*/
-    ToolboxPanel toolbox;
+    private final ToolboxPanel toolbox;
 
     /*contains the value of the last pressed key. 
      used for KeyboardActions*/
-    Integer currentPressedKey;
+    private Integer currentPressedKey;
 
     /**
      * Creates a new PedestrianController with a given ToolboxPanel to decide
@@ -51,6 +52,11 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
         selectionTool = new SelectionToolMouseListener();
         currentPressedKey = null;
         markGoalTool = new MarkGoalToolMouseListener();
+    }
+
+    static Point getConvertedMousePosition(MouseEvent e) {
+        //convert a given mousePosition by applying  the current scale and transformation
+        return ApplicationSingletone.getCurrentMap().zoomListener.convertMousePosition(e.getPoint());
     }
 
     private MouseListener getCurrentMouseListener(MouseEvent e) {
@@ -84,7 +90,7 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
         return currentMouseListener;
     }
 
-    private MouseMotionListener getCurrentMouseMotionListener(MouseEvent e) {
+    private MouseMotionListener getCurrentMouseMotionListener() {
 
         //Returns the MouseMotionListener that should be active
         currentMouseListener = null;
@@ -145,7 +151,7 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
 
         //Pass the event on the current mouseListener
         MouseListener currentListener = getCurrentMouseListener(e);
-         //if the shift tool is selected, there is no mouselistener
+        //if the shift tool is selected, there is no mouselistener
         if (currentListener != null) {
             currentListener.mouseReleased(e);
         }
@@ -170,8 +176,8 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
         }
 
         //Pass the event on the current MouseMotionListener
-        MouseMotionListener currentListener = getCurrentMouseMotionListener(e);
-         //if the shift tool is selected, there is no mouselistener
+        MouseMotionListener currentListener = getCurrentMouseMotionListener();
+        //if the shift tool is selected, there is no mouselistener
         if (currentListener != null) {
             currentListener.mouseDragged(e);
         }
@@ -190,8 +196,8 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
         //Tell the Map where the currentMouseLocation is
         Map map = ApplicationSingletone.getCurrentMap();
         map.setMouse(getConvertedMousePosition(e));
-        MouseMotionListener currentListener = getCurrentMouseMotionListener(e);
-        
+        MouseMotionListener currentListener = getCurrentMouseMotionListener();
+
         //if the shift tool is selected, there is no mouselistener
         if (currentListener != null) {
             currentListener.mouseMoved(e);
@@ -214,11 +220,6 @@ public class PedestrianController implements MouseListener, MouseMotionListener,
     @Override
     public void keyReleased(KeyEvent e) {
         currentPressedKey = null;
-    }
-
-    static Point getConvertedMousePosition(MouseEvent e) {
-        //convert a given mousePosition by applying  the current scale and transformation
-        return ApplicationSingletone.getCurrentMap().zoomListener.convertMousePosition(e.getPoint());
     }
 
     private void resetOthers() {

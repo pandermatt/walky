@@ -1,11 +1,12 @@
 package main.java.controller;
 
 import main.java.gui.PopUpMenu;
-import java.awt.Polygon;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import main.java.pedestriansimulator.ApplicationSingletone;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Is used to display a context-related list of actions after a
@@ -15,8 +16,8 @@ import main.java.pedestriansimulator.Map;
  */
 class RightclickMouseListener implements MouseListener, Resetable {
 
-    Map map; //the current user-map
-    boolean isDragging = false;
+    private final Map map; //the current user-map
+    private boolean isDragging = false;
 
     /**
      * Creates a new RightclickMouseListener
@@ -34,7 +35,6 @@ class RightclickMouseListener implements MouseListener, Resetable {
         if (e.getButton() == MouseEvent.BUTTON3) {
             map.mouseClicked(PedestrianController.getConvertedMousePosition(e));
             displayPopup(e);
-            return;
         }
     }
 
@@ -58,8 +58,8 @@ class RightclickMouseListener implements MouseListener, Resetable {
     public void reset() {
         isDragging = false;
     }
-    
-      private void displayPopup(MouseEvent e) {
+
+    private void displayPopup(MouseEvent e) {
         Map map = ApplicationSingletone.getCurrentMap();
         map.wallPoints.clear();
         map.setSelection(new Polygon(), true);

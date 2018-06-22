@@ -1,16 +1,21 @@
 package main.java.openstreetmapparser;
 
-import java.awt.Dimension;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import main.java.mapElements.Tree;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.*;
-import main.java.mapElements.Tree;
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class is used to process xml-data from OpenStreetMap and extract
@@ -18,17 +23,17 @@ import main.java.mapElements.Tree;
  *
  * @author Pascal Andermatt, Jan Huber
  */
-public class OpenStreetMapParser {
+class OpenStreetMapParser {
 
-    Document document;
-    String filename;
-    ArrayList<NodeLocation> nodeLocations;
-    ArrayList<Tree> allTrees;
+    private Document document;
+    private final String filename;
+    private ArrayList<NodeLocation> nodeLocations;
+    private ArrayList<Tree> allTrees;
 
     /**
      * Creates a new parser with a given file.
      */
-    public OpenStreetMapParser(String filename) throws URISyntaxException, IOException, Exception {
+    public OpenStreetMapParser(String filename) throws Exception {
         this.filename = filename;
         System.out.println("XML wird eingelesen...");
         loadXML(); //converts the xml into many single nodes
@@ -74,12 +79,12 @@ public class OpenStreetMapParser {
      *
      * @return
      */
-    public ArrayList<Tree> loadTrees() {
+    private ArrayList<Tree> loadTrees() {
         System.out.println("Trees werden erfasst...");
         ArrayList<NodeLocation> trees = new ArrayList<>();
         //for each node....
-        for (int i = 0; i < nodeLocations.size(); i++) {
-            Element currentNode = nodeLocations.get(i).getNode();
+        for (NodeLocation nodeLocation: nodeLocations) {
+            Element currentNode = nodeLocation.getNode();
             NodeList tags = currentNode.getElementsByTagName("tag");
             //for each tag ...
             for (int j = 0; j < tags.getLength(); j++) {
@@ -89,7 +94,7 @@ public class OpenStreetMapParser {
                     if (currentTag.getAttribute("k").equals("natural")) { //search trees
                         if (currentTag.getAttribute("v").equals("tree")) {
                             //tree found
-                            trees.add(nodeLocations.get(i)); //add tree to list
+                            trees.add(nodeLocation); //add tree to list
                             break;
                         }
                     }
@@ -101,7 +106,7 @@ public class OpenStreetMapParser {
         ArrayList<Tree> mapTrees = new ArrayList<>();
 
         //update the location of the tree
-        for (NodeLocation tree : trees) {
+        for (NodeLocation tree: trees) {
             Point2D.Double treeLocation = getLocation(tree.getId()).getProjectionPoint();
             mapTrees.add(new Tree(treeLocation.x, treeLocation.y));
         }
@@ -114,13 +119,14 @@ public class OpenStreetMapParser {
      */
     public ArrayList<Tree> getTrees(Dimension screenDimension, Rectangle2D.Double view) {
         //trees are already loaded but with wrong coordinate
-        for (Tree tree : allTrees) {
+        for (Tree tree: allTrees) {
             tree.updateCoordinates(screenDimension, view); //update coordinate
         }
         return allTrees;
     }
 
     /*Private Methods*/
+
     /**
      * Returns the location of a node with a given id
      *
@@ -175,7 +181,7 @@ public class OpenStreetMapParser {
 
         //sort the list
         System.out.println("Nodes werden sortiert");
-        Collections.sort(nodeLocations, NodeLocation.getComperator());
+        nodeLocations.sort(NodeLocation.getComperator());
     }
 
     /**
@@ -183,7 +189,7 @@ public class OpenStreetMapParser {
      *
      * @return true, if the element contains the tag, otherwise false
      */
-    private boolean hasTag(Element currentElement, String searchTag) {
+    private boolean hasTag(Element currentElement) {
         NodeList tags = currentElement.getElementsByTagName("tag");
 
         //loop through each tag of the element
@@ -191,7 +197,7 @@ public class OpenStreetMapParser {
             Element currentTag = (Element) tags.item(j);
             String tag = currentTag.getAttribute("k");
             //is it the correct tag?
-            if (tag != null && (tag.equals(searchTag))) {
+            if (tag != null && (tag.equals("building"))) {
                 return true;
             }
         }
@@ -202,7 +208,7 @@ public class OpenStreetMapParser {
      * Returns if a given element represents a building
      */
     private boolean isBuilding(Element currentElement) {
-        return hasTag(currentElement, "building");
+        return hasTag(currentElement);
 
     }
 
@@ -221,15 +227,15 @@ public class OpenStreetMapParser {
      * Reads the xml into the application.
      */
     private File getRessource() throws URISyntaxException, IOException {
-        String orginalPath = "/ressourcen/" + filename; //build filname
+        String orginalPath = "ressourcen/" + filename; //build filname
         return getFile(orginalPath); //open file
     }
 
     /**
      * Converts the xml-filename into a file.
      */
-    private File getFile(String filename) throws URISyntaxException, IOException {
-        URI uri = getClass().getResource(filename).toURI(); //build uri
+    private File getFile(String filename) throws URISyntaxException {
+        URI uri = getClass().getClassLoader().getResource(filename).toURI(); //build uri
         return new File(uri);
     }
 }

@@ -1,11 +1,15 @@
 package main.java.controller;
 
-import static main.java.controller.PedestrianController.getConvertedMousePosition;
 import main.java.gui.SoundPlayer;
-import java.awt.*;
-import java.awt.event.*;
 import main.java.pedestriansimulator.ApplicationSingletone;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import static main.java.controller.PedestrianController.getConvertedMousePosition;
 
 /**
  * Reacts to Mouse- and Keyboardactions to draw temporaryWall new recangular
@@ -15,7 +19,7 @@ import main.java.pedestriansimulator.Map;
  */
 class RectangleWallToolMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
-    Map map; //the current user-map
+    private final Map map; //the current user-map
     private Rectangle temporaryWall = null; //the wall that should be added to the map later
 
     private Point firstClick = null; //a wall is only added after the second click
@@ -26,6 +30,23 @@ class RectangleWallToolMouseListener implements MouseListener, MouseMotionListen
     public RectangleWallToolMouseListener() {
         map = ApplicationSingletone.getCurrentMap();
         temporaryWall = null;
+    }
+
+    /**
+     * Converts a given rectangle to a polygon. This code was found on the internet.
+     *
+     * @param rect the rectangle that should be converted
+     * @return the polygon that was created
+     * @see http://wikicode.wikidot.com/convert-rectangle-to-polygon
+     */
+    public static Polygon RectangleToPolygon(Rectangle rect) {
+        //converts a rectangle to a polygon
+        Polygon result = new Polygon();
+        result.addPoint(rect.x, rect.y);
+        result.addPoint(rect.x + rect.width, rect.y);
+        result.addPoint(rect.x + rect.width, rect.y + rect.height);
+        result.addPoint(rect.x, rect.y + rect.height);
+        return result;
     }
 
     private void addFirstClick(MouseEvent e) {
@@ -62,23 +83,6 @@ class RectangleWallToolMouseListener implements MouseListener, MouseMotionListen
 
         }
 
-    }
-
-   
-    /**
-     * Converts a given rectangle to a polygon. This code was found on the internet. 
-     * @param rect the rectangle that should be converted
-     * @return the polygon that was created
-     * @see  http://wikicode.wikidot.com/convert-rectangle-to-polygon
-     */
-    public static Polygon RectangleToPolygon(Rectangle rect) {
-        //converts a rectangle to a polygon
-        Polygon result = new Polygon();
-        result.addPoint(rect.x, rect.y);
-        result.addPoint(rect.x + rect.width, rect.y);
-        result.addPoint(rect.x + rect.width, rect.y + rect.height);
-        result.addPoint(rect.x, rect.y + rect.height);
-        return result;
     }
 
     /*Implemented Methods. For documentation see the corresponding Interface-class e.g. MouseListener, MouseMotionListener or Resetable*/

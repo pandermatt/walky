@@ -1,12 +1,14 @@
 package main.java.controller;
 
-import static main.java.controller.PedestrianController.getConvertedMousePosition;
 import main.java.gui.SoundPlayer;
+import main.java.pedestriansimulator.ApplicationSingletone;
+import main.java.pedestriansimulator.Map;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import main.java.pedestriansimulator.ApplicationSingletone;
-import main.java.pedestriansimulator.Map;
+
+import static main.java.controller.PedestrianController.getConvertedMousePosition;
 
 /**
  * Reacts to Mouse- and Keyboardactions to set a target for all the selected

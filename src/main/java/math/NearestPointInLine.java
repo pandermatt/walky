@@ -1,6 +1,6 @@
 package main.java.math;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * This class is able to find the nearest point inside a line-segment for a

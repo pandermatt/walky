@@ -3,29 +3,30 @@ package main.java.pedestriansimulator;
 import java.util.HashMap;
 
 /**
- * The Cacher is used to store results of calculations. By storing the results, 
+ * The Cacher is used to store results of calculations. By storing the results,
  * the computer has to calculate less and the application becomes faster.
- * 
+ *
  * @author Pascal Andermatt, Jan Huber
  */
-public class Cacher {
-    
+class Cacher {
+
     //Cacher is a singletone class
     private static Cacher instance = null;
-    
+
     //contains all the stores results
-    HashMap<String, HashMap<Object, Object>> entries;
+    private HashMap<String, HashMap<Object, Object>> entries;
 
     /**
      * Creates a new Cacher
      */
-    protected Cacher() {
+    private Cacher() {
         entries = new HashMap<>();
     }
 
     /**
      * Returns the single Instance of the Chacher
-     * @return 
+     *
+     * @return
      */
     private static Cacher getInstance() {
         if (instance == null) {
@@ -35,7 +36,7 @@ public class Cacher {
     }
 
     /**
-     * Returns a stored result for a given uniqueInput. 
+     * Returns a stored result for a given uniqueInput.
      */
     public static Object get(String method, Object uniqueInput) {
         //Load method
@@ -57,9 +58,9 @@ public class Cacher {
     /**
      * Stores a result for a given unique input
      */
-    public static Object store(String method, Object uniqueInput, Object toStore, boolean shouldClone) {
+    public static Object store(String method, Object uniqueInput, Object toStore) {
         HashMap<Object, Object> methods = getInstance().entries.get(method); //does the method already exist?
-        if (methods == null) { 
+        if (methods == null) {
             //create new method
             HashMap<Object, Object> toAdd = new HashMap<>();
             toAdd.put(uniqueInput, toStore); //store unique input and result

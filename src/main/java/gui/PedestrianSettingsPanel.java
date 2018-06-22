@@ -1,18 +1,28 @@
 package main.java.gui;
 
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.DefaultFormatter;
 import main.java.pedestrians.AbstractPedestrian;
 import main.java.pedestrians.IntelligentPedestrian;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatter;
+
 /**
  * On this panel, the user can change the settings for new pedestrians
+ *
  * @author Pascal Andermatt, Jan Huber
  */
 public class PedestrianSettingsPanel extends javax.swing.JPanel implements ChangeListener {
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSpinner brushSizeSpinner;
+    private javax.swing.JLabel radiusLabel;
+    private javax.swing.JSlider radiusSlider;
+    private javax.swing.JLabel spaceLabel;
+    private javax.swing.JSlider spaceSlider;
+    private javax.swing.JLabel speedLabel;
+    private javax.swing.JSlider speedSlider;
 
     /**
      * Creates a new PedestrianSettingsPanel
@@ -30,11 +40,8 @@ public class PedestrianSettingsPanel extends javax.swing.JPanel implements Chang
         JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
         DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
         formatter.setCommitsOnValidEdit(true);
-        brushSizeSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                //this method gets called if the value of the spinner changes
-            }
+        brushSizeSpinner.addChangeListener(e -> {
+            //this method gets called if the value of the spinner changes
         });
     }
 
@@ -48,14 +55,14 @@ public class PedestrianSettingsPanel extends javax.swing.JPanel implements Chang
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        title = new javax.swing.JLabel();
+        JLabel title = new JLabel();
         radiusLabel = new javax.swing.JLabel();
         radiusSlider = new javax.swing.JSlider();
         speedSlider = new javax.swing.JSlider();
         speedLabel = new javax.swing.JLabel();
         spaceLabel = new javax.swing.JLabel();
         spaceSlider = new javax.swing.JSlider();
-        brushsizeLabel = new javax.swing.JLabel();
+        JLabel brushsizeLabel = new JLabel();
         brushSizeSpinner = new javax.swing.JSpinner();
 
         setLayout(new java.awt.GridBagLayout());
@@ -147,16 +154,6 @@ public class PedestrianSettingsPanel extends javax.swing.JPanel implements Chang
         gridBagConstraints.insets = new java.awt.Insets(0, 15, 15, 15);
         add(brushSizeSpinner, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JSpinner brushSizeSpinner;
-    private javax.swing.JLabel brushsizeLabel;
-    private javax.swing.JLabel radiusLabel;
-    private javax.swing.JSlider radiusSlider;
-    private javax.swing.JLabel spaceLabel;
-    private javax.swing.JSlider spaceSlider;
-    private javax.swing.JLabel speedLabel;
-    private javax.swing.JSlider speedSlider;
-    private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 
     @Override

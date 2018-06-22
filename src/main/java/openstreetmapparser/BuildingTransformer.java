@@ -15,8 +15,8 @@ class BuildingTransformer {
     public static Rectangle2D.Double calculateViewSize(ArrayList<Building> buildings) {
         //variables for the extremal-points
         Double maxX = null, minX = null, maxY = null, minY = null;
-        for (Building building : buildings) { //for each building
-            for (Location edge : building.getEdges()) { //Get all edges
+        for (Building building: buildings) { //for each building
+            for (Location edge: building.getEdges()) { //Get all edges
                 Point2D.Double projection = edge.getProjectionPoint(); //apply point-protection
                 double x = projection.getX();
                 double y = projection.getY();

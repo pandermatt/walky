@@ -1,16 +1,19 @@
 package main.java.pedestrians;
 
-import main.java.algorithms.*;
+import main.java.algorithms.DijkstraAlgorithm;
+import main.java.algorithms.Edge;
+import main.java.algorithms.Node;
 import main.java.gui.SoundPlayer;
-import java.awt.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import main.java.mapElements.Wall;
 import main.java.math.NearestPointInLine;
 import main.java.math.RandomGenerator;
 import main.java.pedestriansimulator.Graph;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * An IntelligentPedestrians calculates its fastest path to a target and tries
@@ -43,6 +46,30 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
         this(null);
     }
 
+    /*Debuging Methods*/
+    public static void deepPrint(Node p, int depth) {
+        tabPrint(p.getPoint().toString(), depth);
+        if (p.neighboursIsNull()) {
+            p.setNeighbours(new Edge[0]);
+        }
+
+    }
+
+    private static void tabPrint(String message, int depth) {
+        for (int i = 0; i < depth; i++) {
+            System.out.print("\t");
+        }
+        System.out.print(message + "\n");
+    }
+
+    public static double getLarger(double xDistance, double yDistance) {
+        return (xDistance >= yDistance ? xDistance : yDistance);
+    }
+
+    public static double getSmaller(double xDistance, double yDistance) {
+        return (xDistance <= yDistance ? xDistance : yDistance);
+    }
+
     /**
      * Tells the pedestrian that it can take a single step
      */
@@ -62,7 +89,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
 
             if (shouldUpdateFastestPath) {
                 //update path if necessarey
-                nextTargetPoint = updateFastestPath(currentMap, true);
+                nextTargetPoint = updateFastestPath(currentMap);
                 if (nextTargetPoint == NO_FASTEST_PATH) {
                     return; //do nothing
                 }
@@ -81,8 +108,8 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
             setSpeedCounter(getSpeedCounter() - stepLength); //substract stepLength from the speedCpimter
             shouldUpdateFastestPath = result.recalculatePath;
             if ((result.stepsize == 0
-                 && currentLocation.equals(path.get(path.size() - 1)))
-                || path.get(path.size() - 1).distance(currentLocation) <= radius + 1) {
+                    && currentLocation.equals(path.get(path.size() - 1)))
+                    || path.get(path.size() - 1).distance(currentLocation) <= radius + 1) {
                 setColor(Color.BLACK);
                 hasReachedTarget = true;
                 SoundPlayer.play("reached", "wav");
@@ -100,7 +127,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
     /**
      * Recalculates the fastest path to the target
      */
-    public int updateFastestPath(Map currentMap, boolean recalculate) {
+    public int updateFastestPath(Map currentMap) {
 
         try {
             generateFastestPath(currentMap);
@@ -157,7 +184,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
         Double minimum = null;
 
         //for every goal Point
-        for (Point singleGoalPoint : nearGoalPoints.keySet()) {
+        for (Point singleGoalPoint: nearGoalPoints.keySet()) {
 
             //Setup the DijkstraAlgorithm
             DijkstraAlgorithm d = new DijkstraAlgorithm();
@@ -181,7 +208,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
         //add own currentLocation to the fastest path
         path.add(currentLocation);
 
-        for (Node vertex : fastestPath) {
+        for (Node vertex: fastestPath) {
             if (vertex.getPoint().equals(currentLocation)) {
                 continue;
             }
@@ -242,7 +269,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
     private void deleteFrom(int index) {
         ArrayList<Point> toRemove = new ArrayList<>();
         for (int i = index; i < path.size(); i++) {
-            toRemove.add(path.get(i)); //add index to remove List 
+            toRemove.add(path.get(i)); //add index to remove List
         }
 
         //remove all marked Points
@@ -280,7 +307,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
 
             try {
 
-                //ToDo: Hier nullPointerexpexption verhindern 
+                //ToDo: Hier nullPointerexpexption verhindern
                 Point possibility1 = NearestPointInLine.minimalDistancePoint(path.get(i), convexGoal.get(lastIndex), convexGoal.get(indexAfter));
                 Point possibility2 = NearestPointInLine.minimalDistancePoint(path.get(i), convexGoal.get(lastIndex), convexGoal.get(indexBefore));
 
@@ -312,7 +339,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
                     return;
                 }
 
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -321,15 +348,13 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
     @Override
     public boolean hasReachedGoal(int tolerance, Map currentMap) {
         if (currentMap.isVisible(currentLocation, path.get(path.size() - 1), this)) {
-            if (currentLocation.distance(path.get(path.size() - 1)) <= tolerance) {
-                return true;
-            }
+            return currentLocation.distance(path.get(path.size() - 1)) <= tolerance;
         }
         return false;
     }
 
     private Integer getNextGoalPointIndex(Map currentMap) {
-        //get next step 
+        //get next step
 
         if (path.size() == 2 && currentLocation.equals(path.get(0))) {
             return 1;
@@ -366,7 +391,7 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
 
         HashMap<Point, Point> nearGoalPoints = currentMap.getPointsWithDirectTargetConnection(this);
 
-        for (Point neighbour : currentMap.getAllVisiblePoints(currentLocation, this)) {
+        for (Point neighbour: currentMap.getAllVisiblePoints(currentLocation, this)) {
             //neighbour
 
             double distanceToNeighbour = Math.abs(currentLocation.distance(neighbour));
@@ -388,25 +413,13 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
 
     }
 
-    /*Debuging Methods*/
-    public static void deepPrint(Node p, int depth) {
-        tabPrint(p.getPoint().toString(), depth);
-        if (p.neighboursIsNull()) {
-            p.setNeighbours(new Edge[0]);
-        }
-
-    }
-
-    public static void tabPrint(String message, int depth) {
-        for (int i = 0; i < depth; i++) {
-            System.out.print("\t");
-        }
-        System.out.print(message + "\n");
-    }
-
     /*Setter and Getter*/
     public ArrayList<Point> getPath() {
         return path;
+    }
+
+    public void setPath(ArrayList<Point> path) {
+        this.path = path;
     }
 
     @Override
@@ -420,14 +433,6 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
             setColor(goal.getOriginalColor());
             path = new ArrayList<>();
         }
-    }
-
-    public static double getLarger(double xDistance, double yDistance) {
-        return (xDistance >= yDistance ? xDistance : yDistance);
-    }
-
-    public static double getSmaller(double xDistance, double yDistance) {
-        return (xDistance <= yDistance ? xDistance : yDistance);
     }
 
     @Override
@@ -461,10 +466,6 @@ public class IntelligentPedestrian extends AbstractPedestrian implements Seriali
             }
 
         }
-    }
-
-    public void setPath(ArrayList<Point> path) {
-        this.path = path;
     }
 
 }

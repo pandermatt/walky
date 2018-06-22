@@ -1,12 +1,11 @@
 package main.java.pedestrians;
 
 import main.java.mapElements.Wall;
-import java.awt.Color;
-import java.awt.Point;
-import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
 import main.java.math.RandomGenerator;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.io.Serializable;
 
 /**
  * An AbstractPedestrian contains all the attributes and methods which a
@@ -18,28 +17,25 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
 
     //Static variables
     public final static double SQUARE_ROOT_OF_TWO = 1.41421356237; //= length of a diagonal step
-    public final static int DEFAULT_RADIUS = 13;
-    private static int DEFAULT_STEPSIZE = 1; //= default speed
-    
-    private Wall target = null;
-    int stepsize;
-
+    private final static int DEFAULT_RADIUS = 13;
     public Point currentLocation;
     public Point originLocation; //is not changed if the currentLocation changes
     public int radius;
     public int preferredSpace;
-    public double speed;
-    public double speedCounter;
+    private double speed;
+    private double speedCounter;
     public boolean hasReachedTarget; //a pedestrian that has reached its target doesent move anymore
-    
-    public PedestrianBehaviour behaviour; //contains information about how a pedestrian walks
+    public final PedestrianBehaviour behaviour; //contains information about how a pedestrian walks
+    private final int stepsize;
+    private Wall target = null;
 
     /**
      * Creates a new pedestrian
-     * @param color the color that the pedestrian should have
+     *
+     * @param color           the color that the pedestrian should have
      * @param currentLocation where on the map does the pedestrian stand?
      */
-    public AbstractPedestrian(Color color, Point currentLocation) {
+    AbstractPedestrian(Color color, Point currentLocation) {
         super(color);
         this.currentLocation = currentLocation;
         if (currentLocation != null) {
@@ -47,6 +43,8 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
         }
         //set default values
         radius = DEFAULT_RADIUS;
+        //= default speed
+        int DEFAULT_STEPSIZE = 1;
         stepsize = DEFAULT_STEPSIZE;
         preferredSpace = 30;
         speed = 1;
@@ -77,8 +75,9 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
 
     /**
      * Returns if a pedestrian is inside the "private preferred space" of this pedestrian
+     *
      * @param pedestrian
-     * @return 
+     * @return
      */
     public boolean isToNearToPedestrian(AbstractPedestrian pedestrian) {
         if (hasReachedTarget || pedestrian.hasReachedTarget) {
@@ -88,9 +87,10 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
         double distance = pedestrian.getMiddlePoint().distance(getMiddlePoint());
         return (distance < (radius + preferredSpace + pedestrian.radius));
     }
-    
+
     /**
      * Creates a copy of this pedestrian
+     *
      * @return the cloned pedestrian
      */
     public AbstractPedestrian cloneThis() {
@@ -104,7 +104,7 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
     /**
      * Sets the current location of a pedestrian to its origin location
      */
-    public void resetLocation() {
+    void resetLocation() {
         if (originLocation != null) { //set new current location
             currentLocation = new Point(originLocation.x, originLocation.y);
         }
@@ -113,7 +113,7 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
         hasReachedTarget = false;
         behaviour.stepsTakenBeforeDiagonalMove = 0;
     }
-    
+
     /*Setter and Getter*/
 
     public Point getCurrentLocation() {
@@ -146,15 +146,15 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
         return stepsize;
     }
 
+    public Wall getTarget() {
+        return target;
+    }
+
     public void setTarget(Wall goal) {
         if (goal == null) {
             setColor(RandomGenerator.randomBrightColor());
         }
         this.target = goal;
-    }
-
-    public Wall getTarget() {
-        return target;
     }
 
     public void setPreferredSpace(int preferredSpace) {
@@ -170,20 +170,20 @@ public abstract class AbstractPedestrian extends Drawable implements Cloneable, 
         return null; //overwrite in Subclass
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
     public double getSpeed() {
         return speed;
     }
 
-    public void setSpeedCounter(double speedCounter) {
-        this.speedCounter = speedCounter;
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public double getSpeedCounter() {
         return speedCounter;
+    }
+
+    public void setSpeedCounter(double speedCounter) {
+        this.speedCounter = speedCounter;
     }
 
     int distanceToGoal() {

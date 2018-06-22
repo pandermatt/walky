@@ -1,28 +1,30 @@
 package main.java.gui;
 
+import main.java.pedestriansimulator.ApplicationSingletone;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import main.java.pedestriansimulator.ApplicationSingletone;
 
 /**
- * This class is an extended version of the following document: 
+ * This class is an extended version of the following document:
  * https://github.com/sl/BuffonsNeedle/blob/master/src/com/zaptapgo/buffon/gui/ZoomAndPanListener.java
- * 
+ * <p>
  * It is used to provide the PedestrianPanel with a zoom and shift funcionality
+ *
  * @author Sam Lazarus, Jan Huber, Pascal Andermatt
  */
 public class ZoomMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener, Serializable {
 
-    public static final int LEVEL_MINIMUM = -50; //the maximal value to zoom in
-    public static final int LEVEL_MAXIMUM = 20; //to maximal value to zoom out
-    public static final double FACTOR = 1.1; //how fast should the user be able to zoom
+    private static final int LEVEL_MINIMUM = -50; //the maximal value to zoom in
+    private static final int LEVEL_MAXIMUM = 20; //to maximal value to zoom out
+    private static final double FACTOR = 1.1; //how fast should the user be able to zoom
 
     //the component for which the zoomins is applied
-    private Component component;
+    private final Component component;
 
     private int startZoom = 0; //start with no zoom
     private int minimalZoom = LEVEL_MINIMUM;
@@ -32,12 +34,13 @@ public class ZoomMouseListener implements MouseListener, MouseMotionListener, Mo
     //varialbes for drag and drop
     private Point startDragPoint;
     private Point endDragPoint;
-    
+
     //the transformation for the component
     private AffineTransform transformation = new AffineTransform();
 
     /**
      * Creates a new ZoomMouseListener
+     *
      * @param component the component for which the zoom should be applied
      */
     public ZoomMouseListener(Component component) {
@@ -62,7 +65,7 @@ public class ZoomMouseListener implements MouseListener, MouseMotionListener, Mo
         if (mousePoint == null) {
             return null;
         }
-        
+
         //translate x and y 
         double x = mousePoint.getX();
         double y = mousePoint.getY();
@@ -142,10 +145,10 @@ public class ZoomMouseListener implements MouseListener, MouseMotionListener, Mo
     }
 
     /*Methods from Interface*/
-    
+
     /*For documentation see the corresponding interface-class*/
-    
-    
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
         //do nothing
@@ -187,9 +190,9 @@ public class ZoomMouseListener implements MouseListener, MouseMotionListener, Mo
     public void mouseWheelMoved(MouseWheelEvent e) {
         zoomView(e);
     }
-    
+
     /*Setter and Getter*/
-    
+
     private Point2D.Float getTransformedPoint(Point p1) throws NoninvertibleTransformException {
         //transform a single Point
         AffineTransform inverse = transformation.createInverse();

@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 public class ThemeManager extends Observable implements Serializable, Cloneable {
 
     private int acctualThemeIndex;  //which is the index of the actual Theme?
-    private ArrayList<Theme> themes;    //contains all the Themes
+    private final ArrayList<Theme> themes;    //contains all the Themes
 
-    private ArrayList<BackgroundMusicThread> streams; //Contains an arrayList with backgroundmusic streams 
+    private final ArrayList<BackgroundMusicThread> streams; //Contains an arrayList with backgroundmusic streams
     private transient HashMap<String, Image> loadedImages; //Caches images which are already stored
     private boolean musicIsPlaying = false; //is actual Music Playing?
     private int currentMusicTrack; //which is the actual track number?
@@ -39,7 +39,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
 
         acctualThemeIndex = 0;
         streams = new ArrayList<>();
-        loadedImages = new HashMap<String, Image>();
+        loadedImages = new HashMap<>();
         musicIsPlaying = false;
         currentMusicTrack = 1;
 
@@ -56,7 +56,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
      * @param amountOfWonSounds  The Amount of Songs, when you win a game, for the selected Theme
      * @param amountOfMoveSounds The Amount of Songs, for the Move of the Charakter, for the selected Theme
      */
-    public void addTheme(String comboText, String suffix, String titel, Color backgroundColor, int amountOfBackground, int amountOfWonSounds, int amountOfMoveSounds) {
+    private void addTheme(String comboText, String suffix, String titel, Color backgroundColor, int amountOfBackground, int amountOfWonSounds, int amountOfMoveSounds) {
         themes.add(new Theme(comboText, suffix, titel, backgroundColor, amountOfBackground, amountOfWonSounds, amountOfMoveSounds));
         acctualThemeIndex = themes.size() - 1;
         change();
@@ -65,7 +65,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     /**
      * @return Returns the Theme which is selected - ActualTheme
      */
-    public Theme getActualTheme() {
+    private Theme getActualTheme() {
         return themes.get(acctualThemeIndex);
     }
 
@@ -79,7 +79,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     public Image getGraphic(String name, String filetype) {
         //loadedImages = cache
         if (loadedImages == null) {
-            loadedImages = new HashMap<String, Image>();
+            loadedImages = new HashMap<>();
         }
 
         //for access to the ArrayList
@@ -170,7 +170,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
      * @param name     The name of the Background Song
      * @param filetype The filetyp of the Background Song
      */
-    public void playBackgroundMusic(final String name, final String filetype) {
+    private void playBackgroundMusic(final String name, final String filetype) {
 
 
         musicIsPlaying = true;
@@ -186,7 +186,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
      *
      * @param nummer The nummer of the background song to play
      */
-    public void playExactTrack(int nummer) {
+    private void playExactTrack(int nummer) {
         playBackgroundMusic("Start" + nummer, "wav");
         currentMusicTrack = nummer;
         change();
@@ -232,7 +232,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     /**
      * Stops the current Song
      */
-    public void stopBackgroundMusic() {
+    private void stopBackgroundMusic() {
         for (BackgroundMusicThread stream: streams) {
             stream.stopMusic();
         }
@@ -243,7 +243,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     /**
      * Notify Observers
      */
-    public void change() {
+    private void change() {
         setChanged();
         notifyObservers();
 
@@ -252,7 +252,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     /**
      * Plays a random background music track
      */
-    public void playRandomBackgroundMusic() {
+    private void playRandomBackgroundMusic() {
 
         if (!isMusicPlaying()) {
             int index = (int) (Math.random() * getActualTheme().getAmountOfBackgroundSounds() + 1);
@@ -306,7 +306,7 @@ public class ThemeManager extends Observable implements Serializable, Cloneable 
     /**
      * @return if musicIsPlaying
      */
-    public boolean isMusicPlaying() {
+    private boolean isMusicPlaying() {
         return musicIsPlaying;
     }
 

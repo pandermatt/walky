@@ -14,13 +14,18 @@
             <artifactId>jts</artifactId>
             <version>1.13</version>
         </dependency>
+        <dependency>
+            <groupId>net.java.dev.swing-layout</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
         <resources>
             <resource>
-                <directory>resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <plugins>

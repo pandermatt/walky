@@ -1,13 +1,13 @@
-
 package main.java.recording;
 
 import java.util.ArrayList;
 
 /**
  * This static class contains all possible resolutions for the Recording-Frame
+ *
  * @author Pascal Andermatt, Jan Huber
  */
-public class Resolutions {
+class Resolutions {
     public static ArrayList<Resolution> getResolutions() {
         //add all resolutions...
         ArrayList<Resolution> returnList = new ArrayList<>();

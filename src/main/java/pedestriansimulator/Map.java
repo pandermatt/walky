@@ -4,19 +4,21 @@ import main.java.algorithms.Edge;
 import main.java.algorithms.Node;
 import main.java.gui.SoundPlayer;
 import main.java.gui.ZoomMouseListener;
-import java.awt.*;
-import java.awt.Point;
-import java.awt.geom.Line2D;
-import java.io.Serializable;
-import java.util.*;
-import javax.swing.JOptionPane;
-import main.java.mapElements.*;
+import main.java.mapElements.Tree;
+import main.java.mapElements.Wall;
 import main.java.math.NearestPointInLine;
-import main.java.pedestrians.*;
+import main.java.pedestrians.AbstractPedestrian;
 import main.java.pedestrians.IntelligentPedestrian;
-import main.java.polygonAlgorithms.ConvexHullGenerator;
 import main.java.polygonAlgorithms.PolygonHelper;
 import main.java.polygonAlgorithms.PolygonIntersectionChecker;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Line2D;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Observable;
 
 /**
  * The Map is the model of the simulation. It contains all the walls,
@@ -26,32 +28,26 @@ import main.java.polygonAlgorithms.PolygonIntersectionChecker;
  */
 public class Map extends Observable implements Serializable {
 
-    //a list of all the pedestrians
-    private ArrayList<IntelligentPedestrian> pedestrians;
     //the list with the pedestrians on their origin locatin. Used to reset the location
-    public ArrayList<IntelligentPedestrian> pedestriansClone;
-
+    private ArrayList<IntelligentPedestrian> pedestriansClone;
     //all the other elements
-    public ArrayList<Wall> walls;
-    public ArrayList<Tree> trees;
-
+    private final ArrayList<Wall> walls;
+    private final ArrayList<Tree> trees;
     //temporary wall and border-previews
     public transient Point wallBorderPoint;
-    public Rectangle temporaryBoarder = new Rectangle();
-
+    private Rectangle temporaryBoarder = new Rectangle();
+    public transient ArrayList<Point> wallPoints;
+    //the current zoomListener for the view
+    public transient ZoomMouseListener zoomListener = new ZoomMouseListener(null);
+    //a list of all the pedestrians
+    private ArrayList<IntelligentPedestrian> pedestrians;
     //animation-variables
     private boolean isAnimated;
     private transient Thread animationThread;
-
     //the current mouse position
     private transient Point mousePosition;
-    public transient ArrayList<Point> wallPoints;
-
     //the current selection-polygon
     private transient Polygon selection;
-
-    //the current zoomListener for the view
-    public transient ZoomMouseListener zoomListener = new ZoomMouseListener(null);
 
     /**
      * Creates a new Map
@@ -70,6 +66,22 @@ public class Map extends Observable implements Serializable {
         temporaryBoarder = new Rectangle();
         //reset the cache
         clearWallCache();
+    }
+
+    /**
+     * Converts a list of edges into an array of edges
+     *
+     * @param edges the list that should be converted
+     * @return the converted list as an array
+     */
+    public static Edge[] arrayFromList(ArrayList<Edge> edges) {
+        Edge[] returnValue = new Edge[edges.size()];
+
+        //add every Edge
+        for (int i = 0; i < edges.size(); i++) {
+            returnValue[i] = edges.get(i);
+        }
+        return returnValue;
     }
 
     /**
@@ -114,7 +126,7 @@ public class Map extends Observable implements Serializable {
      * Returns if a given location would be a legal position for a pedestrian
      *
      * @param location the location to check
-     * @param radius the radius of the pedestrian
+     * @param radius   the radius of the pedestrian
      * @return
      */
     public boolean isLegalPedestrianCoordinate(Point location, int radius) {
@@ -144,7 +156,7 @@ public class Map extends Observable implements Serializable {
      */
     public synchronized boolean addWall(Polygon wall, boolean checkEdge) {
         ArrayList<AbstractPedestrian> toRemove2 = new ArrayList<>();
-        for (AbstractPedestrian a : getPedestrians()) {
+        for (AbstractPedestrian a: getPedestrians()) {
             if (a.hasReachedTarget) {
                 toRemove2.add(a);
             }
@@ -171,7 +183,7 @@ public class Map extends Observable implements Serializable {
                 int indexAfter = i == points.size() - 1 ? 0 : i + 1;
                 double angle = Math.abs(angleBetween(points.get(i), points.get(indexBefore), points.get(indexAfter)));
                 if (angle <= 20) {
-                //angle is to small: cut the dege
+                    //angle is to small: cut the dege
 
                     //caluculate the x and y that should be added to the edge
                     int xDifference = points.get(indexAfter).x - points.get(indexBefore).x;
@@ -206,7 +218,7 @@ public class Map extends Observable implements Serializable {
 
         //Convert the Points to a Polygon
         Polygon newToAdd = new Polygon();
-        for (Point point : newPolygon) {
+        for (Point point: newPolygon) {
             newToAdd.addPoint(point.x, point.y);
         }
 
@@ -215,10 +227,10 @@ public class Map extends Observable implements Serializable {
 
         //get all pedestrians that are under the wall
         ArrayList<AbstractPedestrian> toRemove = new ArrayList<>();
-        for (int i = 0; i < pedestrians.size(); i++) {
-            AbstractPedestrian current = pedestrians.get(i);
+        for (IntelligentPedestrian pedestrian: pedestrians) {
+            AbstractPedestrian current = pedestrian;
             if (toAdd.intersectsLines(current) || wall.contains(current.getCurrentLocation())) {
-                toRemove.add(pedestrians.get(i));
+                toRemove.add(pedestrian);
                 //addWall(newToAdd);
             }
         }
@@ -229,18 +241,18 @@ public class Map extends Observable implements Serializable {
         ArrayList<Wall> removeWalls = new ArrayList<>();
         ArrayList<AbstractPedestrian> targetPedestrians = new ArrayList<>();
 
-        for (int i = 0; i < walls.size(); i++) {
+        for (Wall wall1: walls) {
             //get all walls that intersects the new Wall
-            if (toAdd.intersectsWall(walls.get(i))) {
+            if (toAdd.intersectsWall(wall1)) {
                 //merge walls
-                toAdd.merge(walls.get(i));
-                for (AbstractPedestrian a : getPedestrians()) {
-                    if (a.getTarget() != null && a.getTarget().equals(walls.get(i))) {
+                toAdd.merge(wall1);
+                for (AbstractPedestrian a: getPedestrians()) {
+                    if (a.getTarget() != null && a.getTarget().equals(wall1)) {
                         targetPedestrians.add(a);
                     }
                 }
                 //remove existing wall
-                removeWalls.add(walls.get(i));
+                removeWalls.add(wall1);
             }
 
         }
@@ -254,7 +266,7 @@ public class Map extends Observable implements Serializable {
         //clear any caches
         clearWallCache();
 
-        for (AbstractPedestrian a : targetPedestrians) {
+        for (AbstractPedestrian a: targetPedestrians) {
             a.setTarget(toAdd);
         }
 
@@ -268,13 +280,13 @@ public class Map extends Observable implements Serializable {
      * Tells all the pedestrians to recalculate their fastest path
      */
     public void generateAllFastestPath() {
-        for (AbstractPedestrian p : pedestrians) {
+        for (AbstractPedestrian p: pedestrians) {
             //for all pedestrians
             if (p instanceof IntelligentPedestrian) {
                 IntelligentPedestrian p2 = (IntelligentPedestrian) p;
                 if (p2.getTarget() != null) { //target may be null
                     p2.generateFastestPath(this); //generate the fastest path
-                    p2.updateFastestPath(this, true);
+                    p2.updateFastestPath(this);
                 }
 
             }
@@ -325,14 +337,11 @@ public class Map extends Observable implements Serializable {
         final Map testMap = this;
         final PedestrianAnimator animator = new PedestrianAnimator(this);
         //create a new thread
-        animationThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //pedestrians should constantly move
-                while (true) {
-                    animator.moveAllPedestrians();
-                    testMap.change();
-                }
+        animationThread = new Thread(() -> {
+            //pedestrians should constantly move
+            while (true) {
+                animator.moveAllPedestrians();
+                testMap.change();
             }
         });
 
@@ -372,38 +381,38 @@ public class Map extends Observable implements Serializable {
 
         //save all the coordinates for x
         int[] xCoordinates = {
-            22, screenWidth - 22,
-            screenWidth - 22,
-            screenWidth / 4 * 3,
-            screenWidth / 4 * 3,
-            screenWidth / 4 * 1,
-            screenWidth / 4 * 1,
-            22};
+                22, screenWidth - 22,
+                screenWidth - 22,
+                screenWidth / 4 * 3,
+                screenWidth / 4 * 3,
+                screenWidth / 4,
+                screenWidth / 4,
+                22};
 
         //save all the coordinates for y
         int[] yCoordinates = {
-            0,
-            0,
-            screenHeight / 10,
-            screenHeight / 10,
-            screenHeight / 10 * 4,
-            screenHeight / 10 * 4,
-            screenHeight / 10,
-            screenHeight / 10};
+                0,
+                0,
+                screenHeight / 10,
+                screenHeight / 10,
+                screenHeight / 10 * 4,
+                screenHeight / 10 * 4,
+                screenHeight / 10,
+                screenHeight / 10};
 
         //add the new wall
         addWall(new Polygon(xCoordinates, yCoordinates, 8), true);
 
         //save the coordinates for the second wall
         int[] yCoordinates2 = {
-            screenHeight,
-            screenHeight,
-            screenHeight - screenHeight / 10,
-            screenHeight - screenHeight / 10,
-            screenHeight / 10 * 6,
-            screenHeight / 10 * 6,
-            screenHeight - screenHeight / 10,
-            screenHeight - screenHeight / 10};
+                screenHeight,
+                screenHeight,
+                screenHeight - screenHeight / 10,
+                screenHeight - screenHeight / 10,
+                screenHeight / 10 * 6,
+                screenHeight / 10 * 6,
+                screenHeight - screenHeight / 10,
+                screenHeight - screenHeight / 10};
         addWall(new Polygon(xCoordinates, yCoordinates2, 8), true);
 
         //clear the cache
@@ -414,10 +423,10 @@ public class Map extends Observable implements Serializable {
      * Selects all the pedestrians on a given point
      *
      * @param selectionPoint the current mouseLocation
-     * @param extendMode true if the selection schould be expanded
+     * @param extendMode     true if the selection schould be expanded
      */
     public void setSelection(Point selectionPoint, boolean extendMode) {
-        for (AbstractPedestrian a : pedestrians) { //for every pedestrian
+        for (AbstractPedestrian a: pedestrians) { //for every pedestrian
             if (a.doesTouch(selectionPoint)) {
                 if (extendMode) {
                     //extend selection
@@ -434,7 +443,7 @@ public class Map extends Observable implements Serializable {
             }
         }
 
-        for (Wall a : walls) { //for every wall
+        for (Wall a: walls) { //for every wall
             if (a.doesTouch(selectionPoint)) {
                 //change selection
                 if (extendMode) {
@@ -459,10 +468,10 @@ public class Map extends Observable implements Serializable {
      * @param point the position where the mouse was clicked
      * @return true is something was selected
      */
-    public boolean mouseClicked(Point point) {
+    public void mouseClicked(Point point) {
         boolean wasSelected = false;
         //select pedestrians if necessary
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             if (a.doesTouch(point)) {
                 wasSelected = true;
             }
@@ -470,12 +479,11 @@ public class Map extends Observable implements Serializable {
         }
 
         //select walls if neccessary
-        for (Wall wall : walls) {
+        for (Wall wall: walls) {
             wall.setSelected(wall.doesTouch(point));
         }
         setChanged();
         notifyObservers();
-        return wasSelected;
     }
 
     /**
@@ -484,16 +492,13 @@ public class Map extends Observable implements Serializable {
      * @return true if there are selected elements, otherwise false
      */
     public boolean hasSelectedElements() {
-        if (hasSelectedPedestrians() || hasSelectedWalls()) {
-            return true;
-        }
-        return false;
+        return hasSelectedPedestrians() || hasSelectedWalls();
     }
 
     /**
      * Tells if a given location would be a legal location for a pedestrian
      *
-     * @param check the location to check
+     * @param check  the location to check
      * @param whoAmI for which pedestrian should the location be checked
      * @return true if the location is legal, otherwise false
      */
@@ -505,7 +510,7 @@ public class Map extends Observable implements Serializable {
         clone.internalSetCurrentLocation(check);
 
         //for every pedestrian
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             if (a.equals(whoAmI)) { //the new location may intersect the 'old' pedestrian
                 continue;
             }
@@ -526,13 +531,13 @@ public class Map extends Observable implements Serializable {
      * Updates the current selection
      *
      * @param currentSelectionPolygon the new selection
-     * @param extend true if the extend-mode is activated - no pedestrian will
-     * be deselected. Otherwise false
+     * @param extend                  true if the extend-mode is activated - no pedestrian will
+     *                                be deselected. Otherwise false
      */
     public void setSelection(Polygon currentSelectionPolygon, boolean extend) {
         selection = currentSelectionPolygon;
         //for every pedestrian
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             //does the selection contain the current pedestrian
             boolean contains = currentSelectionPolygon.contains(a.getMiddlePoint());
             if (extend) {
@@ -544,7 +549,7 @@ public class Map extends Observable implements Serializable {
                 //mark the pedestrian as selected if it is inside the selection
                 a.setSelected(contains);
             }
-            
+
             if (!(extend && a.isSelected())) {
                 //mark the pedestrian as selected if it is inside the selection
                 a.setSelected(contains);
@@ -576,6 +581,12 @@ public class Map extends Observable implements Serializable {
         change();
     }
 
+    /*  //adds a new Border-Wall
+     public void addBorder(int height, int wight) {
+     border.addWallFrame(wight, height); //wall
+     clearWallCache();
+     }*/
+
     /**
      * Clears a temporary selection
      */
@@ -584,11 +595,6 @@ public class Map extends Observable implements Serializable {
         change();
     }
 
-    /*  //adds a new Border-Wall
-     public void addBorder(int height, int wight) {
-     border.addWallFrame(wight, height); //wall
-     clearWallCache();
-     }*/
     /**
      * Removes all selected elements on the map
      */
@@ -597,17 +603,17 @@ public class Map extends Observable implements Serializable {
         SoundPlayer.play("remove", "ogg");
         //get all pedestrians that should be removed
         ArrayList<AbstractPedestrian> removePedestrians = new ArrayList<>();
-        for (int i = 0; i < pedestrians.size(); i++) {
-            if (pedestrians.get(i).isSelected()) {
-                removePedestrians.add(pedestrians.get(i));
+        for (IntelligentPedestrian pedestrian: pedestrians) {
+            if (pedestrian.isSelected()) {
+                removePedestrians.add(pedestrian);
             }
         }
 
         //get all walls that should be removed
         ArrayList<Wall> removeWalls = new ArrayList<>();
-        for (int i = 0; i < walls.size(); i++) {
-            if (walls.get(i).isSelected()) {
-                removeWalls.add(walls.get(i));
+        for (Wall wall: walls) {
+            if (wall.isSelected()) {
+                removeWalls.add(wall);
             }
         }
 
@@ -626,12 +632,12 @@ public class Map extends Observable implements Serializable {
      * @param toRemove a list of walls to remove
      */
     private void removeWalls(ArrayList<Wall> toRemove) {
-        for (Wall w : toRemove) {
-            for (AbstractPedestrian a : pedestrians) {
+        for (Wall w: toRemove) {
+            for (AbstractPedestrian a: pedestrians) {
                 if (w.equals(a.getTarget())) {
                     a.setTarget(null);
-                    IntelligentPedestrian p = (IntelligentPedestrian)a;
-                    p.setPath(new ArrayList<Point>());
+                    IntelligentPedestrian p = (IntelligentPedestrian) a;
+                    p.setPath(new ArrayList<>());
                 }
 
             }
@@ -656,7 +662,7 @@ public class Map extends Observable implements Serializable {
         Wall selected = null;
 
         //which wall is selected
-        for (Wall w : walls) {
+        for (Wall w: walls) {
             if (w.isSelected()) {
                 selected = w;
                 break;
@@ -664,7 +670,7 @@ public class Map extends Observable implements Serializable {
         }
 
         //update the target for every pedestrians
-        for (AbstractPedestrian p : pedestrians) {
+        for (AbstractPedestrian p: pedestrians) {
             p.setTarget(selected);
         }
 
@@ -679,7 +685,7 @@ public class Map extends Observable implements Serializable {
      * Returns a list of all visible edges on the map
      *
      * @param currentPedestrian the list may be different for pedestrians with a
-     * different radius
+     *                          different radius
      * @return
      */
     public synchronized ArrayList<Point> getAllEdges(AbstractPedestrian currentPedestrian) {
@@ -695,24 +701,21 @@ public class Map extends Observable implements Serializable {
             //there is already a result...
             ArrayList<Point> list = (ArrayList<Point>) result;
             //clone the result
-            ArrayList<Point> resultList = new ArrayList<>(list);
-            return resultList;
+            return new ArrayList<>(list);
         }
 
         //no result was cached
         ArrayList<Point> edges = new ArrayList<>();
         //get all edges
-        for (Wall wall : getWalls()) {
-            for (Point edge : PolygonHelper.getPointsFromPolygon(wall.getSingleConvexHull(currentPedestrian))) {
-                edges.add(edge);
-            }
+        for (Wall wall: getWalls()) {
+            edges.addAll(PolygonHelper.getPointsFromPolygon(wall.getSingleConvexHull(currentPedestrian)));
         }
 
         //clone result
         ArrayList<Point> edgeCopy = new ArrayList<>(edges);
 
         //store result
-        Cacher.store(methodName, unique, edges, false);
+        Cacher.store(methodName, unique, edges);
 
         return edgeCopy;
     }
@@ -722,8 +725,8 @@ public class Map extends Observable implements Serializable {
      * location
      *
      * @param currentLocation the location to check if a point is visible
-     * @param pedestrian the pedestrian for which should be checked if a point
-     * is visible
+     * @param pedestrian      the pedestrian for which should be checked if a point
+     *                        is visible
      * @return a list of visible points
      */
     public ArrayList<Point> getAllVisiblePoints(Point currentLocation, AbstractPedestrian pedestrian) {
@@ -734,7 +737,7 @@ public class Map extends Observable implements Serializable {
         dummy.radius = pedestrian.getRadius();
 
         //get all edges for a pedestrian
-        for (Point p : getAllEdges(dummy)) {
+        for (Point p: getAllEdges(dummy)) {
             if (isVisible(currentLocation, p, pedestrian)) {
                 points.add(p);
             }
@@ -784,15 +787,15 @@ public class Map extends Observable implements Serializable {
         HashMap<Point, Point> nearGoalPoints = getPointsWithDirectTargetConnection(pedestrian);
 
         //convert all edges into a node
-        for (Point p : getAllEdges(pedestrian)) {
+        for (Point p: getAllEdges(pedestrian)) {
             edges.add(p, new Node(p));
         }
 
         //Loop through every edge
-        for (Point p : getAllEdges(pedestrian)) {
+        for (Point p: getAllEdges(pedestrian)) {
             //search all neighbours tat should be connected to a node
             ArrayList<Edge> neighbours = new ArrayList<>();
-            for (Point neighbour : getAllVisiblePoints(p, pedestrian)) {
+            for (Point neighbour: getAllVisiblePoints(p, pedestrian)) {
                 //calculate the distance between the two nodes
                 double distanceToNeighbour = Math.abs(p.distance(neighbour));
                 if (nearGoalPoints.containsKey(neighbour)) {
@@ -808,26 +811,10 @@ public class Map extends Observable implements Serializable {
         }
 
         //cache the result
-        Cacher.store(methodName, unique, edges, true);
+        Cacher.store(methodName, unique, edges);
 
         //return a cloned result
         return edges.clone();
-    }
-
-    /**
-     * Converts a list of edges into an array of edges
-     *
-     * @param edges the list that should be converted
-     * @return the converted list as an array
-     */
-    public static Edge[] arrayFromList(ArrayList<Edge> edges) {
-        Edge[] returnValue = new Edge[edges.size()];
-
-        //add every Edge
-        for (int i = 0; i < edges.size(); i++) {
-            returnValue[i] = edges.get(i);
-        }
-        return returnValue;
     }
 
     /**
@@ -837,7 +824,7 @@ public class Map extends Observable implements Serializable {
         //clears the pedestrian arraylist
         pedestrians = new ArrayList<>();
         //loop through every cloned pedestrian
-        for (IntelligentPedestrian p : pedestriansClone) {
+        for (IntelligentPedestrian p: pedestriansClone) {
             //set the right parameters for every pedestrian
             IntelligentPedestrian toAdd = new IntelligentPedestrian(p.originLocation);
             toAdd.setPreferredSpace(p.preferredSpace);
@@ -869,13 +856,13 @@ public class Map extends Observable implements Serializable {
      */
     public boolean setGoalForSelectedPedestrians(Point convertedMousePosition) {
         boolean result = false;
-        for (Wall w : getWalls()) {
+        for (Wall w: getWalls()) {
             //which wall should be the nre target?
             if (w.doesTouch(convertedMousePosition)) {
                 boolean hasChanged = false;
 
                 //update target for every single pedestrian
-                for (AbstractPedestrian a : getPedestrians()) {
+                for (AbstractPedestrian a: getPedestrians()) {
                     if (a.isSelected()) {
                         hasChanged = true;
                         a.setTarget(w);
@@ -885,7 +872,7 @@ public class Map extends Observable implements Serializable {
 
                 //no pedestrian was selected. Update the goal for every pedestrian
                 if (!hasChanged) {
-                    for (AbstractPedestrian a : getPedestrians()) {
+                    for (AbstractPedestrian a: getPedestrians()) {
                         hasChanged = true;
                         a.setTarget(w);
                         result = true;
@@ -923,7 +910,7 @@ public class Map extends Observable implements Serializable {
         //create a new result
         HashMap<Point, Point> returnMap = new HashMap<>();
         //Loop through every Point
-        for (Point p : getAllEdges(pedestrian)) {
+        for (Point p: getAllEdges(pedestrian)) {
 
             //has this point a direct goal Connection
             Point nearestGoalPoint = getDirectConnectionToGoal(p, pedestrian);
@@ -940,7 +927,7 @@ public class Map extends Observable implements Serializable {
         }
 
         //Store the result
-        return (HashMap<Point, Point>) Cacher.store(method, unique, returnMap, false);
+        return (HashMap<Point, Point>) Cacher.store(method, unique, returnMap);
 
     }
 
@@ -955,7 +942,7 @@ public class Map extends Observable implements Serializable {
         }
         //convert the target into a list of lines
         ArrayList<Line2D.Double> lines = pedestrian.getTarget().getLines();
-        for (Line2D.Double l : lines) { //loop through every line
+        for (Line2D.Double l: lines) { //loop through every line
             Point p1 = new Point();
             p1.setLocation(l.getP1());
             Point p2 = new Point();
@@ -963,8 +950,8 @@ public class Map extends Observable implements Serializable {
             //get the minimal distance to the line
             Point minimalDistancePoint = NearestPointInLine.minimalDistancePoint(fromPoint, p1, p2);
             if ((nearestGoalPoint == null
-                 || minimalDistancePoint.distance(fromPoint) < nearestGoalPoint.distance(fromPoint))
-                && isVisible(fromPoint, minimalDistancePoint, pedestrian, pedestrian.getTarget())) {
+                    || minimalDistancePoint.distance(fromPoint) < nearestGoalPoint.distance(fromPoint))
+                    && isVisible(fromPoint, minimalDistancePoint, pedestrian, pedestrian.getTarget())) {
                 //a new minimal distance was found
                 nearestGoalPoint = minimalDistancePoint;
             }
@@ -1011,13 +998,14 @@ public class Map extends Observable implements Serializable {
     }
 
     /*Private Methods*/
+
     /**
      * Calculates the angle between three Points
      */
     private double angleBetween(Point center, Point current, Point previous) {
         //See also: //http://stackoverflow.com/questions/7066792/angle-between-3-points-signed-bad-results
         return Math.toDegrees(Math.atan2(current.x - center.x, current.y - center.y)
-                              - Math.atan2(previous.x - center.x, previous.y - center.y));
+                - Math.atan2(previous.x - center.x, previous.y - center.y));
     }
 
     /**
@@ -1025,20 +1013,14 @@ public class Map extends Observable implements Serializable {
      */
     private int getDirection(int number) {
         //'normalizes' a number
-        if (number == 0) {
-            return 0;
-        } else if (number > 0) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return Integer.compare(0, number);
     }
 
     /**
      * Returns if there are selected pedestrians on the map
      */
     private boolean hasSelectedPedestrians() {
-        for (AbstractPedestrian p : pedestrians) { //loop through every pedestrian
+        for (AbstractPedestrian p: pedestrians) { //loop through every pedestrian
             if (p.isSelected()) {
                 return true;
             }
@@ -1049,7 +1031,7 @@ public class Map extends Observable implements Serializable {
     /**
      * checks if a pedestrian would touch a wall on a given location
      *
-     * @param check the locatino where the pedestrian whould stand
+     * @param check  the locatino where the pedestrian whould stand
      * @param whoAmI the pedestrian that should be checked
      * @return true if a wall would be intersected, otherwise false
      */
@@ -1058,9 +1040,9 @@ public class Map extends Observable implements Serializable {
 
         clone.internalSetCurrentLocation(check);
         //does pedestrian touch wall?
-        for (Wall wall : walls) {
+        for (Wall wall: walls) {
             if ((wall.doesTouch(clone.getMiddlePoint()))
-                || (wall.intersectsLines(clone))) {
+                    || (wall.intersectsLines(clone))) {
                 //pedestrian touches wall
                 return false;
             }
@@ -1072,7 +1054,7 @@ public class Map extends Observable implements Serializable {
      * Returs if the map contains currently selected walls
      */
     private boolean hasSelectedWalls() {
-        for (Wall w : walls) {
+        for (Wall w: walls) {
             if (w.isSelected()) {
                 return true;
             }
@@ -1093,11 +1075,11 @@ public class Map extends Observable implements Serializable {
         }
         //convert the two points to a line
         Line2D.Double l1 = new Line2D.Double(point1, point2);
-        for (Wall w : getWalls()) {
+        for (Wall w: getWalls()) {
             if (w.equals(ignoreWall)) { //should this wall be ignored?
                 continue;
             }
-            for (Line2D.Double line : w.getLines()) { //does the line intersect the fall?
+            for (Line2D.Double line: w.getLines()) { //does the line intersect the fall?
                 if (lineIntersects(line, l1)) {
                     return false;
                 }
@@ -1105,7 +1087,7 @@ public class Map extends Observable implements Serializable {
 
             //if the distance from this line segment and the point is smaller
             //than the radius of the pedestrian, the path ist not possible
-            for (Point p2 : w.getAllPoints()) {
+            for (Point p2: w.getAllPoints()) {
                 if (l1.ptSegDist(p2) < pedestrian.getRadius() - 1) {
                     return false;
                 }
@@ -1143,11 +1125,7 @@ public class Map extends Observable implements Serializable {
                 return false;
             }
 
-            if (Line2D.ptSegDist(from.getX1(), from.getY1(), from.getX2(), from.getY2(), to.getX2(), to.getY2()) == 0) {
-                return false;
-            }
-
-            return true;
+            return !(Line2D.ptSegDist(from.getX1(), from.getY1(), from.getX2(), from.getY2(), to.getX2(), to.getY2()) == 0);
         }
         return false;
     }
@@ -1163,10 +1141,10 @@ public class Map extends Observable implements Serializable {
      * Returns a list with pedestrians that are too near to a pedestrian on a
      * given location
      *
-     * @param check the dummy-location of the pedestrian
-     * @param whoAmI the pedestrian itself
+     * @param check          the dummy-location of the pedestrian
+     * @param whoAmI         the pedestrian itself
      * @param ignorePriority returns all pedestrians that are too near even if
-     * the current pedestrians has priority
+     *                       the current pedestrians has priority
      * @return
      */
     private ArrayList<AbstractPedestrian> getColosionPedestrian(Point check, AbstractPedestrian whoAmI, boolean ignorePriority) {
@@ -1176,15 +1154,15 @@ public class Map extends Observable implements Serializable {
         //clone the pedestrian
         AbstractPedestrian clone = whoAmI.cloneThis();
         clone.setCurrentLocationNotInternal(check);
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             if (a.equals(whoAmI)) {
                 continue;
             }
             //check if the pedestrian is too near
             if ((clone.isToNearToPedestrian(a)) //decide if a pedestrian has priority over the other pedestrian
-                && (ignorePriority
+                    && (ignorePriority
                     || !whoAmI.behaviour.hasPriorityTo(a))
-                && !a.hasReachedTarget) {
+                    && !a.hasReachedTarget) {
                 returnList.add(a);
 
             }
@@ -1197,12 +1175,12 @@ public class Map extends Observable implements Serializable {
      */
     void deselectAll() {
         //deselect all pedestrians
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             a.setSelected(false);
         }
 
         //deselect all walls
-        for (Wall a : walls) {
+        for (Wall a: walls) {
             a.setSelected(false);
         }
     }
@@ -1221,7 +1199,7 @@ public class Map extends Observable implements Serializable {
      * false
      */
     boolean allPedestriansHaveReachedTarget() {
-        for (IntelligentPedestrian a : pedestrians) { //for every pedestrian...
+        for (IntelligentPedestrian a: pedestrians) { //for every pedestrian...
             if (!a.hasReachedTarget) {
                 return false;
             }

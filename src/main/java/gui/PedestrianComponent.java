@@ -1,35 +1,34 @@
 package main.java.gui;
 
+import main.java.pedestriansimulator.ApplicationSingletone;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.io.*;
+import java.io.Serializable;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.*;
-import main.java.pedestriansimulator.ApplicationSingletone;
 
 /**
  * The zoom and pan canvas is used to draw the animations on it
  */
 public class PedestrianComponent extends JPanel implements Observer, Serializable {
 
+    public final ZoomMouseListener zoomAndPanListener;
     private boolean init = true; //init is true if no frame was drawn yet
-    private PedestrianPanel panel;
-
+    private final PedestrianPanel panel;
     //set the points to their default location
     private Point[] points = {
-        new Point(-100, -100),
-        new Point(-100, 100),
-        new Point(100, -100),
-        new Point(100, 100)
+            new Point(-100, -100),
+            new Point(-100, 100),
+            new Point(100, -100),
+            new Point(100, 100)
     };
-
-    public ZoomMouseListener zoomAndPanListener;
 
     /**
      * Creates a ZoomAndPanCanvas
      */
-    public PedestrianComponent() {
+    PedestrianComponent() {
         //set all values
         panel = new PedestrianPanel();
         this.zoomAndPanListener = new ZoomMouseListener(this);

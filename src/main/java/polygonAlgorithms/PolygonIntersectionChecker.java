@@ -1,10 +1,12 @@
 package main.java.polygonAlgorithms;
 
 import com.vividsolutions.jts.geom.*;
+
 import java.util.ArrayList;
 
 /**
  * This class checks if a polygon is self-intersecting
+ *
  * @author Pascal Andermatt, Jan Huber
  */
 public class PolygonIntersectionChecker {
@@ -27,7 +29,7 @@ public class PolygonIntersectionChecker {
 
         //get all points to a polygon
         ArrayList<java.awt.Point> points = PolygonHelper.getPointsFromPolygon(p);
-        
+
         //convert each point to a coordinate
         Coordinate[] coordinates = new Coordinate[points.size() + 1];
         for (int i = 0; i < points.size(); i++) {
@@ -38,8 +40,7 @@ public class PolygonIntersectionChecker {
         //build polygon from coordinates
         GeometryFactory fact = new GeometryFactory();
         LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
-        Polygon poly = new Polygon(linear, null, fact);
-        return poly;
+        return new Polygon(linear, null, fact);
     }
 
 }

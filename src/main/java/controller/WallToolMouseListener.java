@@ -1,24 +1,25 @@
 package main.java.controller;
 
-import static main.java.controller.PedestrianController.getConvertedMousePosition;
 import main.java.gui.SoundPlayer;
-import java.awt.Point;
-import java.awt.Polygon;
+import main.java.pedestriansimulator.ApplicationSingletone;
+import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import main.java.pedestriansimulator.ApplicationSingletone;
-import main.java.pedestriansimulator.Map;
+
+import static main.java.controller.PedestrianController.getConvertedMousePosition;
 
 public class WallToolMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
     private final static int MINIMUM_DISTANCE = 40; //The minimal distance, the wall-Points should have
 
-    ArrayList<Integer> polygonPointsX; //list of x-coordinates for the temporary wall
-    ArrayList<Integer> polygonPointsY; //list of y-coordinates for the temporary wall
-    Map map; //the current user-map
+    private ArrayList<Integer> polygonPointsX; //list of x-coordinates for the temporary wall
+    private ArrayList<Integer> polygonPointsY; //list of y-coordinates for the temporary wall
+    private final Map map; //the current user-map
     private boolean isDragging = false;
 
     /**
@@ -29,6 +30,17 @@ public class WallToolMouseListener implements MouseListener, MouseMotionListener
         this.polygonPointsY = new ArrayList<>();
         map = ApplicationSingletone.getCurrentMap();
 
+    }
+
+    private static int[] arrayListToArray(ArrayList<Integer> integers) {
+        //converts an arrayList with Integer-Values into an Array
+        int[] returnArray = new int[integers.size()];
+        Iterator<Integer> iterator = integers.iterator();
+        for (int i = 0; i < returnArray.length; i++) {
+            //Loop through every single Integer
+            returnArray[i] = iterator.next();
+        }
+        return returnArray;
     }
 
     private Polygon getConvertedPolygon() {
@@ -44,17 +56,6 @@ public class WallToolMouseListener implements MouseListener, MouseMotionListener
         polygonPointsX.clear();
         polygonPointsY.clear();
         map.wallPoints.clear();
-    }
-
-    private static int[] arrayListToArray(ArrayList<Integer> integers) {
-        //converts an arrayList with Integer-Values into an Array
-        int[] returnArray = new int[integers.size()];
-        Iterator<Integer> iterator = integers.iterator();
-        for (int i = 0; i < returnArray.length; i++) {
-            //Loop through every single Integer
-            returnArray[i] = iterator.next().intValue();
-        }
-        return returnArray;
     }
 
     private void addNewPolygonPoint(Point toAdd, boolean ignoreDistance) {
@@ -87,8 +88,8 @@ public class WallToolMouseListener implements MouseListener, MouseMotionListener
             //it was a double click -> add new Wall
             Point toAdd = new Point(getConvertedMousePosition(e));
             if (polygonPointsX.isEmpty()
-                || polygonPointsX.get(polygonPointsX.size() - 1) != toAdd.x
-                || polygonPointsY.get(polygonPointsY.size() - 1) != toAdd.y) {
+                    || polygonPointsX.get(polygonPointsX.size() - 1) != toAdd.x
+                    || polygonPointsY.get(polygonPointsY.size() - 1) != toAdd.y) {
                 //add the last point if it was not already added
                 addNewPolygonPoint(toAdd, true);
 

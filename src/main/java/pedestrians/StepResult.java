@@ -1,14 +1,14 @@
-
 package main.java.pedestrians;
 
 /**
- * Each step a pedestrian takes produces a StepResult. A StepResult contains the 
+ * Each step a pedestrian takes produces a StepResult. A StepResult contains the
  * information if the fastestPath should be recalculated.
+ *
  * @author Pascal Andermatt, Jan Huber
  */
 public class StepResult {
-    public boolean recalculatePath; //true, if the fastest path should be recalculated
-    public double stepsize; //length of the step
+    public final boolean recalculatePath; //true, if the fastest path should be recalculated
+    public final double stepsize; //length of the step
 
     /**
      * Creates a new StepResult.
@@ -17,7 +17,6 @@ public class StepResult {
         this.recalculatePath = recalculateMap;
         this.stepsize = stepsize;
     }
-    
-    
-    
+
+
 }

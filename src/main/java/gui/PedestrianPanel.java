@@ -1,5 +1,16 @@
 package main.java.gui;
 
+import main.java.mapElements.Tree;
+import main.java.mapElements.Wall;
+import main.java.pedestrians.AbstractPedestrian;
+import main.java.pedestrians.IntelligentPedestrian;
+import main.java.pedestriansimulator.ApplicationSingletone;
+import main.java.pedestriansimulator.Map;
+import main.java.polygonAlgorithms.PolygonHelper;
+import main.java.recording.Resolution;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -11,16 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import main.java.mapElements.Tree;
-import main.java.mapElements.Wall;
-import main.java.pedestrians.*;
-import main.java.pedestriansimulator.ApplicationSingletone;
-import main.java.pedestriansimulator.Map;
-import main.java.polygonAlgorithms.ConvexHullGenerator;
-import main.java.polygonAlgorithms.PolygonHelper;
-import main.java.recording.Resolution;
 
 /**
  * The Panel is the view where the user can view the simulation and interact
@@ -34,19 +35,15 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
     private final static int HOUSE_HEIGHT = 15;
     private final static Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
     private final static Stroke fatdashed = new BasicStroke(6, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 0, new float[]{21.0f, 9.0f, 3.0f, 9.0f}, 0);
-
+    private static long lastPaintTime;
     //recording variables
     private boolean init = true;
     private boolean record;
     private int frameNumber = 0;
     private Resolution recordResolution;
     private String recordSavePath;
-    private static long lastPaintTime;
-    private static int fps = 0;
-
     //cached information
-    private ZoomMouseListener zoomAndPanListener;
-    private boolean showDebugInformation = false;
+    private final ZoomMouseListener zoomAndPanListener;
     private Map map;
 
     /**
@@ -66,103 +63,6 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
         recordSavePath = null;
         lastPaintTime = 0;
         map = null;
-    }
-
-    /**
-     * Draws the current animation-image onto a Graphics2D-Object
-     *
-     * @param g2d
-     */
-    public void draw(Graphics2D g2d) {
-        //Initialize settings for drawing
-        GUISettings settings = ApplicationSingletone.getMainWindow().getToolboxPanel().getGuiSettings();
-        showDebugInformation = settings.showDebug;
-        boolean animation = ApplicationSingletone.getMainWindow().getToolboxPanel().animationPlay;
-        Stroke line = g2d.getStroke();
-        map = ApplicationSingletone.getCurrentMap();
-
-        //clear the screen for windows pc's
-        clear(g2d);
-        //must be called after clearing
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        //start drawing
-        if (settings.showVisibleLines) {
-            drawVisibleLines(g2d);
-        }
-
-       
-
-        //draw all walls
-        drawWalls(g2d, settings, line);
-
-        //draw temporary walls
-        if (!animation) {
-            drawTemporaryBorder(g2d);
-            if (ApplicationSingletone.getMainWindow().getToolboxPanel().isPedestrianSelected()) {
-                drawTemporaryPedestrians(g2d, line);
-            }
-            drawTemporaryEdges(g2d);
-        }
-
-        //draw debug information
-        if (showDebugInformation) {
-            drawEdgeInformation(g2d);
-            drawInformationString(g2d, animation);
-        }
-        
-         //draw all the pedestrians
-        g2d.setStroke(line);
-        for (AbstractPedestrian p : map.getPedestrians()) {
-            drawPedestrian(g2d, p, settings);
-
-        }
-    }
-
-    /**
-     * This method is called by the application to draw the simulation on the
-     * screen
-     *
-     * @param g the Graphics-Object where the animation-image should be drawn on
-     */
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d;
-        g2d = (Graphics2D) g.create(); //convert Graphics-Object
-        draw(g2d); //draw animation
-    }
-
-    /**
-     * If the map-model has changed, it is repainted on the screen
-     *
-     * @param o
-     * @param arg
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        repaint();
-    }
-
-    /**
-     * After calling this method, all the painted images will be saved as an
-     * image on the user's harddisk
-     *
-     * @param recordResolution the resolution of the images that should be saved
-     * @param path the path on the user's harddisk where the image should be
-     * saved
-     */
-    public void startRecording(Resolution recordResolution, String path) {
-        this.record = true;
-        this.recordResolution = recordResolution;
-        recordSavePath = path;
-    }
-
-    /**
-     * After calling this method, no more images from the simulation will be
-     * stored
-     */
-    public void pauseRecording() {
-        this.record = false;
     }
 
     /**
@@ -199,6 +99,102 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
     }
 
     /**
+     * Draws the current animation-image onto a Graphics2D-Object
+     *
+     * @param g2d
+     */
+    public void draw(Graphics2D g2d) {
+        //Initialize settings for drawing
+        GUISettings settings = ApplicationSingletone.getMainWindow().getToolboxPanel().getGuiSettings();
+        boolean showDebugInformation = settings.showDebug;
+        boolean animation = ApplicationSingletone.getMainWindow().getToolboxPanel().animationPlay;
+        Stroke line = g2d.getStroke();
+        map = ApplicationSingletone.getCurrentMap();
+
+        //clear the screen for windows pc's
+        clear(g2d);
+        //must be called after clearing
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        //start drawing
+        if (settings.showVisibleLines) {
+            drawVisibleLines(g2d);
+        }
+
+
+        //draw all walls
+        drawWalls(g2d, settings, line);
+
+        //draw temporary walls
+        if (!animation) {
+            drawTemporaryBorder(g2d);
+            if (ApplicationSingletone.getMainWindow().getToolboxPanel().isPedestrianSelected()) {
+                drawTemporaryPedestrians(g2d, line);
+            }
+            drawTemporaryEdges(g2d);
+        }
+
+        //draw debug information
+        if (showDebugInformation) {
+            drawEdgeInformation(g2d);
+            drawInformationString(g2d, animation);
+        }
+
+        //draw all the pedestrians
+        g2d.setStroke(line);
+        for (AbstractPedestrian p: map.getPedestrians()) {
+            drawPedestrian(g2d, p, settings);
+
+        }
+    }
+
+    /**
+     * This method is called by the application to draw the simulation on the
+     * screen
+     *
+     * @param g the Graphics-Object where the animation-image should be drawn on
+     */
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d;
+        g2d = (Graphics2D) g.create(); //convert Graphics-Object
+        draw(g2d); //draw animation
+    }
+
+    /**
+     * If the map-model has changed, it is repainted on the screen
+     *
+     * @param o
+     * @param arg
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        repaint();
+    }
+
+    /**
+     * After calling this method, all the painted images will be saved as an
+     * image on the user's harddisk
+     *
+     * @param recordResolution the resolution of the images that should be saved
+     * @param path             the path on the user's harddisk where the image should be
+     *                         saved
+     */
+    public void startRecording(Resolution recordResolution, String path) {
+        this.record = true;
+        this.recordResolution = recordResolution;
+        recordSavePath = path;
+    }
+
+    /**
+     * After calling this method, no more images from the simulation will be
+     * stored
+     */
+    public void pauseRecording() {
+        this.record = false;
+    }
+
+    /**
      * Re-sets the observer for the map if the map has changed.
      */
     public void mapHasChanged() {
@@ -209,7 +205,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
      * Tries to save an image onto the user's harddisk
      *
      * @param image the image to save
-     * @param path the path where the image should be saved
+     * @param path  the path where the image should be saved
      * @throws IOException if the image can not be saved
      */
     private void tryToSaveImage(BufferedImage image, String path) throws IOException {
@@ -268,8 +264,8 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
      * display a graph.
      */
     private void drawVisibleLines(Graphics2D g2d) {
-        for (AbstractPedestrian ped : map.getPedestrians()) {
-            for (Point to : map.getAllEdges(ped)) { //check all possible point-connections
+        for (AbstractPedestrian ped: map.getPedestrians()) {
+            for (Point to: map.getAllEdges(ped)) { //check all possible point-connections
                 g2d.setColor(map.isVisible(to, ped.getCurrentLocation(), ped) ? Color.BLUE : new Color(0, 0, 0, 0));
                 //Choose color: Blue for visible line, transparent for invisible line
                 drawArrow(g2d, ped.getCurrentLocation().x, ped.getCurrentLocation().y, to.x, to.y);
@@ -283,7 +279,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
      */
     private void drawMarkTargetLine(AbstractPedestrian p, Graphics2D g2d) {
         if (ApplicationSingletone.getMainWindow().getToolboxPanel().isMarkGoalSelected()) {
-            for (Wall w : map.getWalls()) {
+            for (Wall w: map.getWalls()) {
                 if (w.doesTouch(map.getMousePosition())) {
                     g2d.setColor(Color.YELLOW);
                 }
@@ -354,7 +350,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
     private void drawEdgeInformation(Graphics2D g2d) {
         IntelligentPedestrian currentMouse = new IntelligentPedestrian(map.getMousePosition());
         //load all the edges
-        for (Point visible : map.getAllEdges(currentMouse)) {
+        for (Point visible: map.getAllEdges(currentMouse)) {
             g2d.setColor(Color.WHITE);
             //draw the edge and string
             g2d.fillOval(visible.x - 5, visible.y - 5, 2 * 5, 2 * 5);
@@ -367,7 +363,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
      */
     private void drawConvexHulls(Graphics2D g2d) {
         g2d.setStroke(dashed);
-        for (Wall w : map.getWalls()) { //get all the walls
+        for (Wall w: map.getWalls()) { //get all the walls
             g2d.setColor(w.getColor());
             //draw the convex hull
             g2d.drawPolygon(w.getOriginalConvexHull(new IntelligentPedestrian(null)));
@@ -448,7 +444,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
         g2d.setColor(Color.white);
         g2d.setStroke(dashed);
         //draw the temporary wall
-        for (Point p : map.getWallPoints()) {
+        for (Point p: map.getWallPoints()) {
             g2d.fillOval(p.x - 5, p.y - 5, 10, 10);
         }
     }
@@ -472,7 +468,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
             //draw the rectangle
             g2d.drawRect(x, y, width, height);
         }
-        
+
         //Draw the current lines of the polygon
         for (int i = 1; i < map.getWallPoints().size(); i++) {
             //get the current preview line
@@ -537,6 +533,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
         long currentTime = System.currentTimeMillis();
         long difference = currentTime - lastPaintTime;
         lastPaintTime = currentTime;
+        int fps = 0;
         if (difference != 0) {
             fps = (int) (1000 / difference);
         } else {
@@ -552,14 +549,14 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
         }
 
         //Display a warning when the frames per second are low
-        ArrayList<String> infos = new ArrayList<String>();
+        ArrayList<String> infos = new ArrayList<>();
         if (fps < 10) {
             infos.add("Low Frame Rate (FPS)");
         }
 
         //draw all the other informations
         int i = 0;
-        for (String info : infos) {
+        for (String info: infos) {
             g2d.drawString("[INFO] " + info, 20, 80 + 15 * i);
             i++;
         }
@@ -577,7 +574,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
 
         //convert the x and y location
         ArrayList<Point> points = PolygonHelper.getPointsFromPolygon(p);
-        for (Point point : points) {
+        for (Point point: points) {
             int x1 = point.x - currentMouse.x;
             int y1 = point.y - currentMouse.y;
             point.x += (x1 / (101 / heightX));
@@ -586,7 +583,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
 
         //convert the coordinate-list back into a polygon
         Polygon newPoly = new Polygon();
-        for (Point point : points) {
+        for (Point point: points) {
             newPoly.addPoint(point.x, point.y);
         }
         return newPoly;
@@ -623,8 +620,8 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
                 //draw all convex hulls
                 drawConvexHulls(g2d);
             }
-            for (Wall wall : map.getWalls()) {
-                for (Polygon p : wall.getCurrentEdges()) {
+            for (Wall wall: map.getWalls()) {
+                for (Polygon p: wall.getCurrentEdges()) {
                     //draw each wall-Polygon
                     drawSinglePolygon(g2d, wall, p, line);
                     if (settings.show3DEffect) { //apply 3D-Effect if necessary
@@ -633,7 +630,7 @@ public class PedestrianPanel extends JPanel implements Observer, Serializable {
                 }
             }
 
-            for (Tree tree : map.getTrees()) {
+            for (Tree tree: map.getTrees()) {
                 //draw all trees
                 drawTree(g2d, tree);
             }

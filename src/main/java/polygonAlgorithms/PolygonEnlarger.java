@@ -1,12 +1,11 @@
 package main.java.polygonAlgorithms;
 
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 //Algorithm 'inspired' from here: http://stackoverflow.com/questions/3749678/expand-fill-of-convex-polygon
+
 /**
  * This class can expand a given polygon by a given radius
  *
@@ -18,7 +17,7 @@ public class PolygonEnlarger {
      * Decides if the Points from a given Polygon are ordered clockwiese or
      * anti-clockwise
      */
-    public static boolean isClockwise(Polygon poly) {
+    private static boolean isClockwise(Polygon poly) {
 
         int sum = 0;
 
@@ -40,7 +39,7 @@ public class PolygonEnlarger {
     /**
      * Shifts a given line.
      */
-    public static Line2D.Double paralellShift(Line2D.Double oldLine, int amount, boolean isClockwise) {
+    private static Line2D.Double paralellShift(Line2D.Double oldLine, int amount, boolean isClockwise) {
 
         //Calculate difference in x- and y-direction
         double xDifference = oldLine.x2 - oldLine.x1;
@@ -71,6 +70,7 @@ public class PolygonEnlarger {
     }
 
     //Quelle: http://www.ahristov.com/tutorial/geometry-games/intersection-lines.html
+
     /**
      * Computes the intersection between two lines. The calculated point is
      * approximate, since integers are used. If you need a more precise result,
@@ -102,11 +102,12 @@ public class PolygonEnlarger {
 
         return new Point(Math.round((float) xi), (int) Math.round(yi));
     }
-    
+
 
     /**
      * Expands a given polygon.
-     * @param polygon the polygon that should be enlarged
+     *
+     * @param polygon   the polygon that should be enlarged
      * @param expansion how much should the polygon be enlarged?
      * @return the enlarged polygons
      */
@@ -131,7 +132,7 @@ public class PolygonEnlarger {
             //shift current lines
             Line2D.Double currentLine = paralellShift(currentLineUnshift, expansion, isClockwise); //gibt manchmal nan zurück??
             Line2D.Double nextLine = paralellShift(nextLineUnshift, expansion, isClockwise);
-            
+
             //get intersection Point
             Point intersection = intersection(currentLine.x1, currentLine.y1, currentLine.x2, currentLine.y2, nextLine.x1, nextLine.y1, nextLine.x2, nextLine.y2);
 

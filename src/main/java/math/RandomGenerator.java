@@ -1,6 +1,6 @@
 package main.java.math;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -14,7 +14,7 @@ public class RandomGenerator {
      * Create a random number inside a range
      *
      * @param from the minimalValue
-     * @param to the maximalValue
+     * @param to   the maximalValue
      * @return generated random number
      */
     public static int randomNumber(int from, int to) {

@@ -1,11 +1,12 @@
 package main.java.algorithms;
 
-import java.awt.Point;
+import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
-import main.java.pedestriansimulator.Map;
 
 /**
  * A {@code Node} is part of a Graph. In this application, a {@code Node}
@@ -16,8 +17,8 @@ import main.java.pedestriansimulator.Map;
 public class Node implements Comparable<Node>, Serializable, Cloneable {
 
     private final Point pointRepresentation; //the Point which the node represents
-    private Edge[] neighbours; //contains all the Nodes which are connected to this Node
     public double minimalDistance = Double.POSITIVE_INFINITY; //used by the DijkstraAlgorithm
+    private Edge[] neighbours; //contains all the Nodes which are connected to this Node
     private Node previous; //used by the DijkstraAlgorithm - tells which node was visited before this node
 
     /**
@@ -74,7 +75,7 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
      * Adds this Node to a vertex list, used by the DijkstraAlgorithm
      *
      * @param currentEdge the edge which link to this node
-     * @param vertexList teh list to which this node should be added
+     * @param vertexList  teh list to which this node should be added
      */
     private void addTargetToList(Edge currentEdge, PriorityQueue<Node> vertexList) {
         Node currentTarget = currentEdge.getTargetNode();
@@ -83,9 +84,7 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
         //find the path with the minimal distance
         double distanceToVertex = minimalDistance + distance;
         boolean isNewMininalDistance
-                = (currentTarget == null)
-                ? false
-                : distanceToVertex < currentTarget.minimalDistance;
+                = (currentTarget != null) && distanceToVertex < currentTarget.minimalDistance;
 
         if (isNewMininalDistance) {
             //replace minimal distance
@@ -114,7 +113,7 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
         if (neighboursIsNull()) {
             return; //there are no neighbours to add
         }
-        for (Edge e : neighbours) {
+        for (Edge e: neighbours) {
             //also add all neighbours
             e.getTargetNode().addCopyOfYourself(newData);
         }
@@ -125,7 +124,7 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
      * This method is used to clone a Node. All Neighbours of this node are
      * copied from a given list and updated
      *
-     * @param newData contains all the nodes which were already cloned
+     * @param newData     contains all the nodes which were already cloned
      * @param orginalNode this node should later replace the orginalNode
      */
     public void recursivelySetNeighbours(HashMap<Point, Node> newData, HashMap<Point, Node> orginalNode) {
@@ -145,7 +144,7 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
         }
 
         //Clone all the neighbours
-        for (Edge e : myOrginalEdition.neighbours) {
+        for (Edge e: myOrginalEdition.neighbours) {
             Node cloneEdgeVertex = newData.get(e.getTargetNode().pointRepresentation);
             cloneEdgeVertex.recursivelySetNeighbours(newData, orginalNode);
             neighboursArrayList.add(new Edge(cloneEdgeVertex, e.getWeight()));
@@ -159,13 +158,13 @@ public class Node implements Comparable<Node>, Serializable, Cloneable {
      * @param vertexList the list where the target-nodes should be added.
      */
     void addAllTargetToList(PriorityQueue<Node> vertexList) {
-        for (Edge currentEdge : neighbours) {
+        for (Edge currentEdge: neighbours) {
             addTargetToList(currentEdge, vertexList);
         }
     }
 
     /*Setter and Getter*/
-    
+
     public Point getPoint() {
         return new Point(pointRepresentation.x, pointRepresentation.y);
     }

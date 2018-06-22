@@ -29,7 +29,7 @@ public class SoundPlayer implements Serializable, Cloneable {
      * @return false, when sound was unable to play - true, when sound played
      * successful
      */
-    private boolean playSound(String name, String filetype) {
+    private void playSound(String name, String filetype) {
         //get path of sound
         try {
             //create path
@@ -41,9 +41,7 @@ public class SoundPlayer implements Serializable, Cloneable {
 //            AudioPlayer.player.start(as);
         } catch (Exception ex) {
             System.err.println("the requested sound was not able to play");
-            return false;
         }
-        return true;
     }
 
 }

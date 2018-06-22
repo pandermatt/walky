@@ -21,10 +21,10 @@ class BorderToolMouseListener implements MouseListener, MouseMotionListener, Res
 
     private final static int THICKNESS = 2; //the thickness of the border's walls
 
-    Map map; //the current user-map
-    boolean isDragging;
-    boolean isFirstClick; //a new border is added after the second click
-    Point click = null; //the location of a mouseClick
+    private final Map map; //the current user-map
+    private boolean isDragging;
+    private boolean isFirstClick; //a new border is added after the second click
+    private Point click = null; //the location of a mouseClick
 
     /**
      * Creates a new BorderToolMouseListener

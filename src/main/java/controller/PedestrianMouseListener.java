@@ -1,15 +1,16 @@
 package main.java.controller;
 
-import static main.java.controller.PedestrianController.getConvertedMousePosition;
 import main.java.gui.SoundPlayer;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import javax.swing.JOptionPane;
 import main.java.pedestrians.AbstractPedestrian;
 import main.java.pedestriansimulator.ApplicationSingletone;
 import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import static main.java.controller.PedestrianController.getConvertedMousePosition;
 
 /**
  * Reacts to Mouse- and Keyboardactions to add new pedestrians
@@ -18,7 +19,7 @@ import main.java.pedestriansimulator.Map;
  */
 class PedestrianMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
-    Map map; //the current user-map
+    private final Map map; //the current user-map
 
     /**
      * Creates a new PedestrianMouseListener
@@ -32,10 +33,6 @@ class PedestrianMouseListener implements MouseListener, MouseMotionListener, Res
     public void mouseClicked(MouseEvent e) {
         //add a new Pedestrian
         addPedestrians(e);
-
-    }
-
-    public void addPedestrians() {
 
     }
 

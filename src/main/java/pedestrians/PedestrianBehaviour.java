@@ -1,23 +1,23 @@
 package main.java.pedestrians;
 
-import java.awt.Color;
-import java.awt.Point;
+import main.java.math.RandomGenerator;
+import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import main.java.math.RandomGenerator;
+
 import static main.java.pedestrians.AbstractPedestrian.SQUARE_ROOT_OF_TWO;
-import main.java.pedestriansimulator.Map;
 
 /**
  * The PedestrianBehaviour-Class defines how the pedestrians interact with each
  * other and how they decide the direction of their next step.
  */
-public class PedestrianBehaviour implements Serializable{
-
-    AbstractPedestrian pedestrian; //the pedestrian for which the next step should be calculated
+public class PedestrianBehaviour implements Serializable {
 
     public double stepsUntilDiagonalMove; //after how many straight steps should the pedestrian do a diagonal step?
     public double stepsTakenBeforeDiagonalMove; //how many steps has the pedestrian taken befor he can do a diagonal step?
+    private final AbstractPedestrian pedestrian; //the pedestrian for which the next step should be calculated
 
     /**
      * Creates a new PedestrianBehaviour
@@ -68,14 +68,14 @@ public class PedestrianBehaviour implements Serializable{
      * Tells the pedestrian to step towards a given Point.
      *
      * @param minimalDistancePoint the point towards which the pedestrian should
-     * walk
+     *                             walk
      * @return
      */
-    protected StepResult stepTowards(Point minimalDistancePoint, Map currentMap) {
+    StepResult stepTowards(Point minimalDistancePoint, Map currentMap) {
 
-        /**
-         * A walking pedestrian has three priorities: 1. Keep Preffered space to
-         * other pedestrians 2. Take the direct path 3. do a random step
+        /*
+          A walking pedestrian has three priorities: 1. Keep Preffered space to
+          other pedestrians 2. Take the direct path 3. do a random step
          */
         //is the step possible?
         if (pedestrian.getSpeedCounter() < 1 || minimalDistancePoint == null) {
@@ -117,8 +117,7 @@ public class PedestrianBehaviour implements Serializable{
             }
 
             //try to make the best step
-            StepResult r = tryToMakeStep(xDifference, yDifference, currentMap, minimalDistancePoint, false);
-            return r;
+            return tryToMakeStep(xDifference, yDifference, currentMap, minimalDistancePoint, false);
         } else {
 
             //there are collisions. Try to increase distance to other pedestrians
@@ -128,19 +127,18 @@ public class PedestrianBehaviour implements Serializable{
                     new Point(pedestrian.currentLocation.x + 1, pedestrian.currentLocation.y), collisions, currentMap) < totalToNearDistance(new Point(pedestrian.currentLocation.x, pedestrian.currentLocation.y), collisions, currentMap)) {
                 xDifference = 1;
             } else {
-                xDifference = - 1;
+                xDifference = -1;
             }
 
             //for y
             if (totalToNearDistance(new Point(pedestrian.currentLocation.x, pedestrian.currentLocation.y + 1), collisions, currentMap) < totalToNearDistance(new Point(pedestrian.currentLocation.x, pedestrian.currentLocation.y), collisions, currentMap)) {
                 yDifference = 1;
             } else {
-                yDifference = - 1;
+                yDifference = -1;
             }
 
             //try to make the best step
-            StepResult r = tryToMakeStep(xDifference, yDifference, currentMap, minimalDistancePoint, true);
-            return r;
+            return tryToMakeStep(xDifference, yDifference, currentMap, minimalDistancePoint, true);
         }
     }
 
@@ -186,9 +184,9 @@ public class PedestrianBehaviour implements Serializable{
         if (currentMap.isThisALegalPedestrianCoordinate(newCoordinate1, pedestrian)) {
 
             if (xDifference == 0
-                || yDifference == 0
-                || ignoreDiagonal
-                || stepsTakenBeforeDiagonalMove >= stepsUntilDiagonalMove) {
+                    || yDifference == 0
+                    || ignoreDiagonal
+                    || stepsTakenBeforeDiagonalMove >= stepsUntilDiagonalMove) {
 
                 //step would be possible
                 if (canMakeStep(xDifference, yDifference)) {
@@ -224,16 +222,15 @@ public class PedestrianBehaviour implements Serializable{
     /**
      * Calculates how much other pedestrians are inside this pedestrian's 'preferred space'
      */
-    double totalToNearDistance(Point location, ArrayList<AbstractPedestrian> pedestrians, Map currentMap) {
+    private double totalToNearDistance(Point location, ArrayList<AbstractPedestrian> pedestrians, Map currentMap) {
         double totalDistance = 0;
         //add distance for each pedestrian
-        for (AbstractPedestrian a : pedestrians) {
+        for (AbstractPedestrian a: pedestrians) {
             //only count pedestrians when they are visible
             if (a.getTarget() == null || pedestrian.getTarget() == null) {
                 totalDistance += ((pedestrian.preferredSpace - Math.abs(location.distance(a.getCurrentLocation()))));
 
-            }
-            else if (currentMap.isVisible(location, a.getCurrentLocation(), a)) {
+            } else if (currentMap.isVisible(location, a.getCurrentLocation(), a)) {
                 totalDistance += ((pedestrian.preferredSpace - Math.abs(location.distance(a.getCurrentLocation()))) * (a.getTarget().equals(pedestrian.getTarget()) ? 1 : 100));
             }
         }
@@ -257,7 +254,7 @@ public class PedestrianBehaviour implements Serializable{
         }
 
     }
-    
+
     /**
      * Checks if a step is possible.
      */
@@ -266,7 +263,7 @@ public class PedestrianBehaviour implements Serializable{
     }
 
     /*Setter and Getter*/
-    
+
     /**
      * Calculates the length of a step for a given coordinate
      */
@@ -274,7 +271,7 @@ public class PedestrianBehaviour implements Serializable{
         return getStepLength(goalPoint.x - pedestrian.currentLocation.x, goalPoint.y - pedestrian.currentLocation.y);
     }
 
-     /**
+    /**
      * Calculates the length of a step for a given x- and y- difference
      */
     private double getStepLength(int xDifference, int yDifference) {

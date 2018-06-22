@@ -14,6 +14,13 @@ public class GUISettings extends javax.swing.JPanel {
     public boolean showPreferredRadius;
     public boolean showDebug;
     public boolean show3DEffect;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton jConvexH;
+    private javax.swing.JToggleButton jToGoal;
+    private javax.swing.JToggleButton jToWalls;
+    private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JToggleButton jToggleButton3;
+    private javax.swing.JToggleButton jToggleButton4;
 
     /**
      * Creates new form GUISettings
@@ -39,7 +46,7 @@ public class GUISettings extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel4 = new javax.swing.JPanel();
+        javax.swing.JPanel jPanel4 = new javax.swing.JPanel();
         jToWalls = new javax.swing.JToggleButton();
         jToGoal = new javax.swing.JToggleButton();
         jConvexH = new javax.swing.JToggleButton();
@@ -53,21 +60,13 @@ public class GUISettings extends javax.swing.JPanel {
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
         jToWalls.setText("Show visible lines");
-        jToWalls.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToWallsActionPerformed(evt);
-            }
-        });
+        jToWalls.addActionListener(evt -> jToWallsActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel4.add(jToWalls, gridBagConstraints);
 
         jToGoal.setText("Hide path");
-        jToGoal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToGoalActionPerformed(evt);
-            }
-        });
+        jToGoal.addActionListener(evt -> jToGoalActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -75,11 +74,7 @@ public class GUISettings extends javax.swing.JPanel {
         jPanel4.add(jToGoal, gridBagConstraints);
 
         jConvexH.setText("Show convex hull");
-        jConvexH.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jConvexHActionPerformed(evt);
-            }
-        });
+        jConvexH.addActionListener(evt -> jConvexHActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -87,11 +82,7 @@ public class GUISettings extends javax.swing.JPanel {
         jPanel4.add(jConvexH, gridBagConstraints);
 
         jToggleButton3.setText("Show preferred space");
-        jToggleButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton3ActionPerformed(evt);
-            }
-        });
+        jToggleButton3.addActionListener(evt -> jToggleButton3ActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -99,11 +90,7 @@ public class GUISettings extends javax.swing.JPanel {
         jPanel4.add(jToggleButton3, gridBagConstraints);
 
         jToggleButton2.setText("Show debug information");
-        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton2ActionPerformed(evt);
-            }
-        });
+        jToggleButton2.addActionListener(evt -> jToggleButton2ActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
@@ -111,11 +98,7 @@ public class GUISettings extends javax.swing.JPanel {
         jPanel4.add(jToggleButton2, gridBagConstraints);
 
         jToggleButton4.setText("Show 3D walls (test)");
-        jToggleButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton4ActionPerformed(evt);
-            }
-        });
+        jToggleButton4.addActionListener(evt -> jToggleButton4ActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -131,7 +114,7 @@ public class GUISettings extends javax.swing.JPanel {
         add(jPanel4, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToWallsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToWallsActionPerformed
+    private void jToWallsActionPerformed() {//GEN-FIRST:event_jToWallsActionPerformed
         //switch the value of 'showVisibleLines'
         showVisibleLines = jToWalls.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -143,7 +126,7 @@ public class GUISettings extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jToWallsActionPerformed
 
-    private void jToGoalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToGoalActionPerformed
+    private void jToGoalActionPerformed() {//GEN-FIRST:event_jToGoalActionPerformed
         //switch the value of 'showLineToTarget'
         showLineToTarget = jToGoal.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -156,7 +139,7 @@ public class GUISettings extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jToGoalActionPerformed
 
-    private void jConvexHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jConvexHActionPerformed
+    private void jConvexHActionPerformed() {//GEN-FIRST:event_jConvexHActionPerformed
         //switch the value of 'showConvexHull'
         showConvexHull = jConvexH.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -169,7 +152,7 @@ public class GUISettings extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jConvexHActionPerformed
 
-    private void jToggleButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton3ActionPerformed
+    private void jToggleButton3ActionPerformed() {//GEN-FIRST:event_jToggleButton3ActionPerformed
         //switch the value of 'showPreferredRadius'
         showPreferredRadius = jToggleButton3.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -182,7 +165,7 @@ public class GUISettings extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jToggleButton3ActionPerformed
 
-    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
+    private void jToggleButton2ActionPerformed() {//GEN-FIRST:event_jToggleButton2ActionPerformed
         //switch the value of 'showDebug'
         showDebug = jToggleButton2.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -195,7 +178,7 @@ public class GUISettings extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
-    private void jToggleButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton4ActionPerformed
+    private void jToggleButton4ActionPerformed() {//GEN-FIRST:event_jToggleButton4ActionPerformed
         //switch the value of 'show3DEffect'
         show3DEffect = jToggleButton4.isSelected();
         ApplicationSingletone.getCurrentMap().change();
@@ -207,15 +190,5 @@ public class GUISettings extends javax.swing.JPanel {
             jToggleButton4.setText("Show 3D walls (test)");
         }
     }//GEN-LAST:event_jToggleButton4ActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton jConvexH;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JToggleButton jToGoal;
-    private javax.swing.JToggleButton jToWalls;
-    private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JToggleButton jToggleButton3;
-    private javax.swing.JToggleButton jToggleButton4;
     // End of variables declaration//GEN-END:variables
 }

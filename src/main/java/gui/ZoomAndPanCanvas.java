@@ -7,5 +7,5 @@ package main.java.gui;
  *
  * @author Pascal Andermatt, Jan Huber
  */
-public class ZoomAndPanCanvas extends PedestrianComponent {
+class ZoomAndPanCanvas extends PedestrianComponent {
 }

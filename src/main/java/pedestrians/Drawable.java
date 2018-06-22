@@ -12,22 +12,21 @@ import java.util.ArrayList;
  */
 public abstract class Drawable implements Serializable {
 
-    //values
-    private Color color;
-    public ArrayList<Polygon> currentEdges;
-    public Polygon originEdges;
-    public boolean selected;
-
+    protected ArrayList<Polygon> currentEdges;
+    private final Polygon originEdges;
+    boolean selected;
     //location
     protected double x;
     protected double y;
+    //values
+    private Color color;
 
     /**
      * Creates a new drawable abstract Object
      *
      * @param color
      */
-    public Drawable(Color color) {
+    protected Drawable(Color color) {
         this.color = color;
         this.currentEdges = null;
         this.originEdges = null;
@@ -42,10 +41,6 @@ public abstract class Drawable implements Serializable {
     }
 
     /*Setter and Getter*/
-    
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
 
     public ArrayList<Polygon> getCurrentEdges() {
         return currentEdges;
@@ -55,18 +50,22 @@ public abstract class Drawable implements Serializable {
         return selected;
     }
 
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     public Color getColor() {
         if (isSelected()) {
             return Color.CYAN; //if selected, a drawable object always has the same color
         }
         return color;
     }
-    
-    public Color getOriginalColor() {
-        return color;
+
+    void setColor(Color color) {
+        this.color = color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    Color getOriginalColor() {
+        return color;
     }
 }

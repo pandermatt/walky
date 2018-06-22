@@ -2,7 +2,7 @@ package main.java.media;
 
 //This class was created for another project and used here
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -14,13 +14,13 @@ import java.io.Serializable;
  */
 public class Theme implements Serializable, Cloneable {
 
-    private String name;    //name of the theme
-    private String suffix;  //the suffix for the Ressource-Files
-    private String titelString; //A String which welcomes the User
-    private Color backgroundColor;  //A custom Background Theme for the theme
-    private int amountOfBackgroundSounds; //How many BackgroundSounds does this Theme contain?
-    private int amountOfWonSounds;  //How many Won-Sounds does thie Theme contain?
-    private int amountOfMoveSounds; //How many Move-Sounds does thie Theme contain?
+    private final String name;    //name of the theme
+    private final String suffix;  //the suffix for the Ressource-Files
+    private final String titelString; //A String which welcomes the User
+    private final Color backgroundColor;  //A custom Background Theme for the theme
+    private final int amountOfBackgroundSounds; //How many BackgroundSounds does this Theme contain?
+    private final int amountOfWonSounds;  //How many Won-Sounds does thie Theme contain?
+    private final int amountOfMoveSounds; //How many Move-Sounds does thie Theme contain?
 
     public Theme(String name, String suffix, String titelString, Color backgroundColor, int amountOfBackgroundSounds, int amountOfWonSounds, int amountOfMoveSounds) {
         this.name = name;
@@ -33,6 +33,7 @@ public class Theme implements Serializable, Cloneable {
     }
 
     //Getter for fields
+
     /**
      * @return the name
      */

@@ -1,17 +1,18 @@
 package main.java.mapElements;
 
+import main.java.math.RandomGenerator;
+import main.java.pedestrians.AbstractPedestrian;
+import main.java.pedestrians.Drawable;
+import main.java.polygonAlgorithms.ConvexHullGenerator;
 import main.java.polygonAlgorithms.PolygonEnlarger;
+import main.java.polygonAlgorithms.PolygonHelper;
+
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.io.Serializable;
 import java.util.ArrayList;
-import main.java.math.RandomGenerator;
-import main.java.pedestrians.AbstractPedestrian;
-import main.java.pedestrians.Drawable;
-import main.java.polygonAlgorithms.ConvexHullGenerator;
-import main.java.polygonAlgorithms.PolygonHelper;
 
 /**
  * A wall is an obstacle for a pedestrian. A pedestrian has to find a path
@@ -21,17 +22,16 @@ import main.java.polygonAlgorithms.PolygonHelper;
  */
 public class Wall extends Drawable implements Serializable {
 
+    //every wall can have a title  - used to import maps
+    private String title;
     //convex hull is cached
     private Polygon largeConvexHullCache;
     private Polygon normalConvexHullCache;
 
-    //every wall can have a title  - used to import maps
-    String title;
-
     /**
      * Creates a new Wall
      */
-    public Wall() {
+    private Wall() {
         //set a random color for the wall
         super(RandomGenerator.randomBrightColor());
         //initialize all variables
@@ -54,10 +54,21 @@ public class Wall extends Drawable implements Serializable {
     }
 
     /**
+     * Creates a polygon from a given PathIterator (Code from the internet)
+     */
+    private static void toPolygon(PathIterator p_path, Polygon mask_tmp) {
+        double[] point = new double[2];
+        if (p_path.currentSegment(point) != PathIterator.SEG_CLOSE) {
+            //add new Point to the Polygon
+            mask_tmp.addPoint((int) point[0], (int) point[1]);
+        }
+    }
+
+    /**
      * Returns if a wall is touched by a given point
      */
     public boolean doesTouch(Point check) {
-        for (Polygon currentPolygon : currentEdges) {
+        for (Polygon currentPolygon: currentEdges) {
             //is point inside wall?
             if (currentPolygon.contains(check)) {
                 return true;
@@ -72,7 +83,7 @@ public class Wall extends Drawable implements Serializable {
     public boolean intersectsLines(AbstractPedestrian pedestrian) {
 
         //split wall into lines
-        for (Line2D.Double line : getLines()) {
+        for (Line2D.Double line: getLines()) {
             //check if distance from pedestrian to line is larger than its expansion
             if (line.ptSegDist(pedestrian.currentLocation) < pedestrian.getRadius()) {
                 return true;
@@ -89,7 +100,7 @@ public class Wall extends Drawable implements Serializable {
         ArrayList<Line2D.Double> returnList = new ArrayList<>();
 
         //get lines from single polygon
-        for (Polygon current : currentEdges) {
+        for (Polygon current: currentEdges) {
             returnList.addAll(PolygonHelper.getLines(current));
         }
         return returnList;
@@ -104,7 +115,7 @@ public class Wall extends Drawable implements Serializable {
         ArrayList<Line2D.Double> returnList = new ArrayList<>();
 
         //for every polygon
-        for (Polygon current : currentEdges) {
+        for (Polygon current: currentEdges) {
 
             //expand the polygon and get the lines
             returnList.addAll(PolygonHelper.getLines(
@@ -120,12 +131,12 @@ public class Wall extends Drawable implements Serializable {
     public boolean intersectsWall(Wall toCheck) {
 
         //get all polygons from this wall
-        for (Polygon thisPolygon : getCurrentEdges()) {
+        for (Polygon thisPolygon: getCurrentEdges()) {
             //get all polygons from the other polygons
-            for (Polygon otherPolygon : toCheck.getCurrentEdges()) {
+            for (Polygon otherPolygon: toCheck.getCurrentEdges()) {
                 //check for every point....
                 ArrayList<Point> p1 = PolygonHelper.getPointsFromPolygon(thisPolygon);
-                for (Point p : p1) {
+                for (Point p: p1) {
                     //does the other polygon contain a point of this polygon?
                     if (otherPolygon.contains(p)) {
                         return true;
@@ -134,7 +145,7 @@ public class Wall extends Drawable implements Serializable {
 
                 //does this polygon contain a point of the other polygon?
                 ArrayList<Point> p2 = PolygonHelper.getPointsFromPolygon(otherPolygon);
-                for (Point p : p2) {
+                for (Point p: p2) {
                     if (thisPolygon.contains(p)) {
                         return true;
                     }
@@ -146,8 +157,8 @@ public class Wall extends Drawable implements Serializable {
                 ArrayList<Line2D.Double> lines2 = toCheck.getLines();
 
                 //is there any line-intersection?
-                for (Line2D.Double line : lines) {
-                    for (Line2D.Double line2 : lines2) {
+                for (Line2D.Double line: lines) {
+                    for (Line2D.Double line2: lines2) {
                         if (line.intersectsLine(line2)) {
                             return true;
                         }
@@ -158,19 +169,19 @@ public class Wall extends Drawable implements Serializable {
         return false;
     }
 
+    //code aus dem Internet...
+
     /**
      * Merges this wall with another wall
      *
      * @param mergeWith the wall with which this wall should be merged
      */
     public void merge(Wall mergeWith) {
-        for (Polygon wallPolygon : mergeWith.getCurrentEdges()) {
-            currentEdges.add(wallPolygon); //add the other polygon to this wall
-        }
+        //add the other polygon to this wall
+        currentEdges.addAll(mergeWith.getCurrentEdges());
         largeConvexHullCache = null;
     }
 
-    //code aus dem Internet...
     /**
      * Merge two polygons to a single polygon. Can sometimes result in wrong
      * merging.
@@ -214,7 +225,7 @@ public class Wall extends Drawable implements Serializable {
      * Converts the wall into a single convex hull for a given pedestrian
      *
      * @param pedestrian the convex hull is expanded by the expansion of the
-     * pedestrian
+     *                   pedestrian
      */
     public Polygon getSingleConvexHull(AbstractPedestrian pedestrian) {
 
@@ -234,7 +245,7 @@ public class Wall extends Drawable implements Serializable {
             //convert convex hull
             ArrayList<Point> allPoints = getInsideConvexHullPoints(pedestrian.getRadius());
             convexPolygon = new Polygon();
-            for (Point point : allPoints) {
+            for (Point point: allPoints) {
                 convexPolygon.addPoint(point.x, point.y);
             }
             //return convex hull
@@ -251,7 +262,7 @@ public class Wall extends Drawable implements Serializable {
     /**
      * Returns the convex hull of this polygon that was not enlarged
      */
-    public Polygon getSingleConvexHullNotLarger() {
+    private Polygon getSingleConvexHullNotLarger() {
         //read cache
         if (normalConvexHullCache == null) {
             //store convex hull in cache
@@ -267,7 +278,7 @@ public class Wall extends Drawable implements Serializable {
      * Returns the original convex hull of this wall
      *
      * @param forPedestrian the convex hull is expanded by the expansion of the
-     * forPedestrian
+     *                      forPedestrian
      */
     public Polygon getOriginalConvexHull(AbstractPedestrian forPedestrian) {
 
@@ -294,7 +305,7 @@ public class Wall extends Drawable implements Serializable {
      */
     private Polygon getSingleMergedPolygon() {
         Polygon fullPolygon = new Polygon();
-        for (Polygon current : getCurrentEdges()) { //for each polygon
+        for (Polygon current: getCurrentEdges()) { //for each polygon
             fullPolygon = merge(fullPolygon, current); //merge with the other polygon
         }
         return fullPolygon;
@@ -305,32 +316,21 @@ public class Wall extends Drawable implements Serializable {
      *
      * @param radius how much should the polygons be enlarged?
      */
-    public ArrayList<Point> getInsideConvexHullPoints(int radius) {
+    private ArrayList<Point> getInsideConvexHullPoints(int radius) {
         ArrayList<Point> possibleWalkingPoints = new ArrayList<>();
-        for (Polygon p : currentEdges) { //for every polygon...
-            //add the enlarged 
+        for (Polygon p: currentEdges) { //for every polygon...
+            //add the enlarged
             possibleWalkingPoints.addAll(PolygonHelper.getPointsFromPolygon(PolygonEnlarger.expandPolygon(p, radius)));
         }
         return possibleWalkingPoints;
     }
 
     /**
-     * Creates a polygon from a given PathIterator (Code from the internet)
-     */
-    private static void toPolygon(PathIterator p_path, Polygon mask_tmp) {
-        double[] point = new double[2];
-        if (p_path.currentSegment(point) != PathIterator.SEG_CLOSE) {
-            //add new Point to the Polygon
-            mask_tmp.addPoint((int) point[0], (int) point[1]);
-        }
-    }
-
-    /**
      * Returns if a given Point equals an edge of this wall
      */
     public boolean isEdge(Point point) {
-        for (Polygon p : getCurrentEdges()) { //for every polygon
-            for (Point p2 : PolygonHelper.getPointsFromPolygon(p)) { //get points from polygon
+        for (Polygon p: getCurrentEdges()) { //for every polygon
+            for (Point p2: PolygonHelper.getPointsFromPolygon(p)) { //get points from polygon
                 if (p2.equals(point)) {
                     return true;
                 }
@@ -354,7 +354,7 @@ public class Wall extends Drawable implements Serializable {
     public ArrayList<Point> getAllPoints() {
 
         ArrayList<Point> returnList = new ArrayList<>();
-        for (Polygon p : getCurrentEdges()) { //for every polygon...
+        for (Polygon p: getCurrentEdges()) { //for every polygon...
             returnList.addAll(PolygonHelper.getPointsFromPolygon(p)); //get Points
         }
         return returnList;

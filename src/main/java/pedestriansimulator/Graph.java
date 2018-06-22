@@ -1,7 +1,8 @@
 package main.java.pedestriansimulator;
 
 import main.java.algorithms.Node;
-import java.awt.Point;
+
+import java.awt.*;
 import java.util.HashMap;
 
 /**
@@ -47,6 +48,7 @@ public class Graph {
      */
     @Override
     public Graph clone() {
+        Graph graph = (Graph) super.clone();
 
         //Create an empty graph
         HashMap<Point, Node> newData = new HashMap<>();

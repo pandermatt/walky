@@ -2,23 +2,20 @@ package main.java.media;
 
 //This class was created for another project and used here
 
+import javax.sound.sampled.*;
 import java.io.Serializable;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
 
 /**
  * The {@code BackgroundMusicThread}-class can play Music in a seperate Thread.
  * It can be stoped without calling the deprecated method stop(). This class was developed originally for the project "Pushy"
+ *
  * @author Pascal Andermatt, Jan Huber
  */
-public class BackgroundMusicThread extends Thread implements Serializable {
+class BackgroundMusicThread extends Thread implements Serializable {
 
-    private String filename;
-    private String filetype;
-    private String suffix;
+    private final String filename;
+    private final String filetype;
+    private final String suffix;
     private boolean shouldPlay = true;
 
     public BackgroundMusicThread(String filename, String filetype, String suffix) {
@@ -53,7 +50,7 @@ public class BackgroundMusicThread extends Thread implements Serializable {
             byte[] abData = new byte[30000];
 
             //Play Sound
-            while (nBytesRead != -1 && (shouldPlay == true)) {
+            while (nBytesRead != -1 && (shouldPlay)) {
                 nBytesRead = audioInputStream.read(abData, 0, abData.length);
                 if (nBytesRead >= 0) {
                     int nBytesWritten = line.write(abData, 0, nBytesRead);
@@ -76,7 +73,7 @@ public class BackgroundMusicThread extends Thread implements Serializable {
 
             //Play Theme Sound
             String orginalPath = "/sounds/" + filename + suffix + "." + filetype;
-            if (!playFromPath(orginalPath));
+            if (!playFromPath(orginalPath)) ;
             {
                 orginalPath = "/sounds/" + filename + "." + filetype;
                 //Play original Sound

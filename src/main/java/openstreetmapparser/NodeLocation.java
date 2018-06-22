@@ -1,17 +1,18 @@
 package main.java.openstreetmapparser;
 
-import java.util.Comparator;
 import org.w3c.dom.Element;
+
+import java.util.Comparator;
 
 /**
  * A NodeLocation represents a single Point in a xml-map.
  *
  * @author Pascal Andermatt, Jan Huber
  */
-public class NodeLocation {
+class NodeLocation {
 
-    String id;
-    Element node;
+    private final String id;
+    private final Element node;
 
     /**
      * Creates a new NodeLocation with a given element
@@ -33,7 +34,7 @@ public class NodeLocation {
      * Returns the comperator to compare two NodeLocations (used for sorting)
      */
     public static Comparator<NodeLocation> getComperator() {
-        Comparator<NodeLocation> comparator = new Comparator<NodeLocation>() {
+        return new Comparator<NodeLocation>() {
             public int compare(NodeLocation o1, NodeLocation o2) {
                 //use id for comparation
                 if (o1.getId().equals(o2.getId())) {
@@ -42,7 +43,6 @@ public class NodeLocation {
                 return o1.getId().compareTo(o2.getId());
             }
         };
-        return comparator;
     }
 
     /*Setter and Getter*/

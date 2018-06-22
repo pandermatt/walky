@@ -9,12 +9,11 @@ import java.util.PriorityQueue;
 /**
  * The {@code DijkstraAlgorithm} is used to find the fastest possible path
  * between two Points in a graph.
- *
+ * <p>
  * This class was built with the help of StackOverflow.
  *
  * @author Luke (from Stackoverflow), Pascal Andermatt, Jan Huber
- * @see
- * <a>http://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map</a>
+ * @see <a>http://stackoverflow.com/questions/17480022/java-find-shortest-path-between-2-points-in-a-distance-weighted-map</a>
  * <a>https://de.wikipedia.org/wiki/Dijkstra-Algorithmus</a>
  */
 public class DijkstraAlgorithm implements Serializable {
@@ -42,7 +41,7 @@ public class DijkstraAlgorithm implements Serializable {
      * @return a list of {@code Vertex} representing the fastest path
      */
     public List<Node> createShortestPathToTarget(Node targetVertex) {
-        List<Node> shortestPath = new ArrayList<Node>();
+        List<Node> shortestPath = new ArrayList<>();
         for (Node currentVertex = targetVertex; currentVertex != null; currentVertex = currentVertex.getPrevious()) {
             shortestPath.add(currentVertex);
         }
@@ -54,7 +53,7 @@ public class DijkstraAlgorithm implements Serializable {
     private PriorityQueue<Node> buildVertexList(Node startVertex) {
         //convert a single vertex to a list
         startVertex.minimalDistance = 0.;
-        PriorityQueue<Node> vertexList = new PriorityQueue<Node>();
+        PriorityQueue<Node> vertexList = new PriorityQueue<>();
         vertexList.add(startVertex);
         return vertexList;
     }

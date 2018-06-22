@@ -21,6 +21,7 @@ class Location {
     }
 
     /*Setter and Getter*/
+
     /**
      * @return the lat
      */
@@ -52,7 +53,7 @@ class Location {
     /*Converts the lat/lon point to x and y by using MercatorProjection*/
     public Point2D.Double getProjectionPoint() {
         MercatorProjection gmap2 = new MercatorProjection();
-        PointF point1 = gmap2.applyMercatorProjection(lat, lon, 15);
+        PointF point1 = gmap2.applyMercatorProjection(lat, lon);
         return new Point2D.Double(point1.x, point1.y);
     }
 }

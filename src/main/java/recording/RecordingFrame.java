@@ -1,11 +1,12 @@
 package main.java.recording;
 
 import main.java.gui.PedestrianPanel;
-import java.awt.Dimension;
-import java.io.File;
-import javax.swing.JFileChooser;
 import main.java.pedestriansimulator.ApplicationSingletone;
 import main.java.pedestriansimulator.PedestrianAnimator;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 
 /**
  * The RecordingFrame is a window which gives the user the possibility to record
@@ -15,11 +16,18 @@ import main.java.pedestriansimulator.PedestrianAnimator;
  */
 public class RecordingFrame extends javax.swing.JFrame {
 
-    public static String ownResolution = "Own Resolution";
+    private static final String ownResolution = "Own Resolution";
+    private final PedestrianPanel pedestrianPanel; //this panel is displayed inside the frame
+    private PedestrianAnimator animator; //animator to animate the pedestrians
     private String saveLocationPath; //where should the frames be stored?
-    PedestrianPanel pedestrianPanel; //this panel is displayed inside the frame
-    PedestrianAnimator animator; //animator to animate the pedestrians
-
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton chooseLocation;
+    private javax.swing.JTextField location;
+    private javax.swing.JComboBox resolutionBox;
+    private javax.swing.JButton startButton;
+    private javax.swing.JTextField xTextField;
+    private javax.swing.JTextField yTextField;
     /**
      * Creates new form RecordingFrame
      */
@@ -43,23 +51,23 @@ public class RecordingFrame extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        JLabel jLabel1 = new JLabel();
+        JPanel jPanel1 = new JPanel();
+        JLabel jLabel2 = new JLabel();
         resolutionBox = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
+        JLabel jLabel5 = new JLabel();
         xTextField = new javax.swing.JTextField();
         chooseLocation = new javax.swing.JButton();
         location = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        JLabel jLabel3 = new JLabel();
+        JLabel jLabel4 = new JLabel();
         yTextField = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
+        JPanel jPanel2 = new JPanel();
         cancelButton = new javax.swing.JButton();
         startButton = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        JLabel jLabel6 = new JLabel();
+        JLabel jLabel7 = new JLabel();
+        JLabel jLabel8 = new JLabel();
 
         setMinimumSize(new java.awt.Dimension(615, 250));
         setPreferredSize(new java.awt.Dimension(615, 250));
@@ -83,12 +91,8 @@ public class RecordingFrame extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 17);
         jPanel1.add(jLabel2, gridBagConstraints);
 
-        resolutionBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "[FullHD] 1920 x 1080", "Item 2", "Item 3", "Item 4" }));
-        resolutionBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resolutionBoxActionPerformed(evt);
-            }
-        });
+        resolutionBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"[FullHD] 1920 x 1080", "Item 2", "Item 3", "Item 4"}));
+        resolutionBox.addActionListener(evt -> resolutionBoxActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -105,20 +109,18 @@ public class RecordingFrame extends javax.swing.JFrame {
         jPanel1.add(jLabel5, gridBagConstraints);
 
         xTextField.setPreferredSize(new java.awt.Dimension(100, 28));
-        xTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xTextFieldActionPerformed(evt);
-            }
-        });
+        xTextField.addActionListener(evt -> xTextFieldActionPerformed());
         xTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                xTextFieldKeyTyped(evt);
+                xTextFieldKeyTyped();
             }
+
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                xTextFieldKeyPressed(evt);
+                xTextFieldKeyPressed();
             }
+
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                xTextFieldKeyReleased(evt);
+                xTextFieldKeyReleased();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -129,11 +131,7 @@ public class RecordingFrame extends javax.swing.JFrame {
         jPanel1.add(xTextField, gridBagConstraints);
 
         chooseLocation.setText("Choose Location");
-        chooseLocation.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chooseLocationActionPerformed(evt);
-            }
-        });
+        chooseLocation.addActionListener(evt -> chooseLocationActionPerformed());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -163,22 +161,20 @@ public class RecordingFrame extends javax.swing.JFrame {
         yTextField.setMinimumSize(new java.awt.Dimension(100, 28));
         yTextField.addInputMethodListener(new java.awt.event.InputMethodListener() {
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                yTextFieldInputMethodTextChanged(evt);
+                yTextFieldInputMethodTextChanged();
             }
+
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
-        yTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yTextFieldActionPerformed(evt);
-            }
-        });
+        yTextField.addActionListener(evt -> yTextFieldActionPerformed());
         yTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                yTextFieldKeyTyped(evt);
+                yTextFieldKeyTyped();
             }
+
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                yTextFieldKeyReleased(evt);
+                yTextFieldKeyReleased();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -200,42 +196,34 @@ public class RecordingFrame extends javax.swing.JFrame {
         getContentPane().add(jPanel1, gridBagConstraints);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed());
 
         startButton.setText("Start");
-        startButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startButtonActionPerformed(evt);
-            }
-        });
+        startButton.addActionListener(evt -> startButtonActionPerformed());
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 161, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(startButton)
-                    .addGap(0, 0, 0)
-                    .addComponent(cancelButton)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 161, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(startButton)
+                                        .addGap(0, 0, 0)
+                                        .addComponent(cancelButton)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 29, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(startButton)
-                        .addComponent(cancelButton))
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 29, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(startButton)
+                                                .addComponent(cancelButton))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -282,8 +270,8 @@ public class RecordingFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void resolutionBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resolutionBoxActionPerformed
-        
+    private void resolutionBoxActionPerformed() {//GEN-FIRST:event_resolutionBoxActionPerformed
+
         //update GUI
         updateResolutionTextfields();
         updateStartButton();
@@ -291,7 +279,7 @@ public class RecordingFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_resolutionBoxActionPerformed
 
-    private void chooseLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLocationActionPerformed
+    private void chooseLocationActionPerformed() {//GEN-FIRST:event_chooseLocationActionPerformed
         //Create a new FileChooser
         JFileChooser fc = new JFileChooser();
 
@@ -325,19 +313,19 @@ public class RecordingFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_chooseLocationActionPerformed
 
-    private void xTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xTextFieldActionPerformed
+    private void xTextFieldActionPerformed() {//GEN-FIRST:event_xTextFieldActionPerformed
         //updateGUI
         updateStartButton();
 
     }//GEN-LAST:event_xTextFieldActionPerformed
 
-    private void yTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yTextFieldActionPerformed
+    private void yTextFieldActionPerformed() {//GEN-FIRST:event_yTextFieldActionPerformed
         //updateGUI
         updateStartButton();
 
     }//GEN-LAST:event_yTextFieldActionPerformed
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void cancelButtonActionPerformed() {//GEN-FIRST:event_cancelButtonActionPerformed
         //re-enable GUI
         pedestrianPanel.pauseRecording();
         animator.stop();
@@ -347,37 +335,37 @@ public class RecordingFrame extends javax.swing.JFrame {
         chooseLocation.setEnabled(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void xTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTextFieldKeyPressed
+    private void xTextFieldKeyPressed() {//GEN-FIRST:event_xTextFieldKeyPressed
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_xTextFieldKeyPressed
 
-    private void yTextFieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_yTextFieldInputMethodTextChanged
+    private void yTextFieldInputMethodTextChanged() {//GEN-FIRST:event_yTextFieldInputMethodTextChanged
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_yTextFieldInputMethodTextChanged
 
-    private void xTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTextFieldKeyTyped
+    private void xTextFieldKeyTyped() {//GEN-FIRST:event_xTextFieldKeyTyped
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_xTextFieldKeyTyped
 
-    private void yTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yTextFieldKeyTyped
+    private void yTextFieldKeyTyped() {//GEN-FIRST:event_yTextFieldKeyTyped
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_yTextFieldKeyTyped
 
-    private void xTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTextFieldKeyReleased
+    private void xTextFieldKeyReleased() {//GEN-FIRST:event_xTextFieldKeyReleased
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_xTextFieldKeyReleased
 
-    private void yTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yTextFieldKeyReleased
+    private void yTextFieldKeyReleased() {//GEN-FIRST:event_yTextFieldKeyReleased
         //update GUI
         updateStartButton();
     }//GEN-LAST:event_yTextFieldKeyReleased
 
-    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+    private void startButtonActionPerformed() {//GEN-FIRST:event_startButtonActionPerformed
         //Start new ewcording with given parameters
         pedestrianPanel.startRecording(new Resolution(null, Integer.parseInt(xTextField.getText()), Integer.parseInt(yTextField.getText())), saveLocationPath);
 
@@ -385,21 +373,17 @@ public class RecordingFrame extends javax.swing.JFrame {
         ApplicationSingletone.getCurrentMap().generateAllFastestPath();
 
         //start animation
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while (true) {
-                    //move all pedestrians
-                    animator.moveAllPedestrians();
-                    ApplicationSingletone.getCurrentMap().change();
-                }
+        Thread t = new Thread(() -> {
+            while (true) {
+                //move all pedestrians
+                animator.moveAllPedestrians();
+                ApplicationSingletone.getCurrentMap().change();
             }
         });
 
         //start animation
         t.start();
-        
+
         //disable GUI
         cancelButton.setEnabled(true);
         startButton.setEnabled(false);
@@ -407,26 +391,6 @@ public class RecordingFrame extends javax.swing.JFrame {
         chooseLocation.setEnabled(false);
 
     }//GEN-LAST:event_startButtonActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton chooseLocation;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField location;
-    private javax.swing.JComboBox resolutionBox;
-    private javax.swing.JButton startButton;
-    private javax.swing.JTextField xTextField;
-    private javax.swing.JTextField yTextField;
     // End of variables declaration//GEN-END:variables
 
     private void addResolutions() {
@@ -437,7 +401,7 @@ public class RecordingFrame extends javax.swing.JFrame {
         resolutionBox.addItem(new Resolution("Window Resolution", d.width, d.height));
         resolutionBox.addItem(ownResolution);
         //add all resolutions
-        for (Resolution resolution : Resolutions.getResolutions()) {
+        for (Resolution resolution: Resolutions.getResolutions()) {
             resolutionBox.addItem(resolution);
         }
         resolutionBox.setSelectedIndex(0);
@@ -448,7 +412,7 @@ public class RecordingFrame extends javax.swing.JFrame {
 
     private void updateResolutionTextfields() {
         //update the values of all textfields
-        
+
         //enable or disable textfields
         if ((resolutionBox == null) || (resolutionBox.getSelectedItem() == null) || (resolutionBox.getSelectedItem().equals(ownResolution))) {
             xTextField.setEnabled(true);
@@ -459,7 +423,7 @@ public class RecordingFrame extends javax.swing.JFrame {
 
             //get currnet values
             Resolution currentResolution = (Resolution) resolutionBox.getSelectedItem();
-            
+
             //fill textfield with current Values
             xTextField.setText("" + currentResolution.getX());
             yTextField.setText("" + currentResolution.getY());
@@ -473,7 +437,7 @@ public class RecordingFrame extends javax.swing.JFrame {
     }
 
     private void updateStartButton() {
-       //enables or disables the start-button
+        //enables or disables the start-button
         startButton.setEnabled(canStartRecording());
     }
 
@@ -496,10 +460,6 @@ public class RecordingFrame extends javax.swing.JFrame {
         }
 
         //x and y must be > 0
-        if ((x <= 0) || (y <= 0)) {
-            return false;
-        }
-
-        return true;
+        return (x > 0) && (y > 0);
     }
 }

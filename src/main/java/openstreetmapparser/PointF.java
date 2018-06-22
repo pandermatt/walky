@@ -5,7 +5,7 @@ package main.java.openstreetmapparser;
  *
  * @author Pascal Andermatt, Jan Huber
  */
-public final class PointF {
+final class PointF {
 
     //coordinates
 

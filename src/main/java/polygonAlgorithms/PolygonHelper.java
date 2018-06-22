@@ -1,7 +1,6 @@
 package main.java.polygonAlgorithms;
 
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -32,8 +31,8 @@ public class PolygonHelper {
      */
     static Polygon getPolygonFromPoints(ArrayList<Point> points) {
         Polygon returnPolygon = new Polygon();
-        for (int i = 0; i < points.size(); i++) {
-            returnPolygon.addPoint(points.get(i).x, points.get(i).y);
+        for (Point point: points) {
+            returnPolygon.addPoint(point.x, point.y);
         }
         return returnPolygon;
     }

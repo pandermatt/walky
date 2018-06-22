@@ -10,10 +10,10 @@ import java.io.Serializable;
  */
 public class Resolution implements Serializable {
 
-    private String title;
+    private final String title;
     //dimension
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     /**
      * Creates a new resolution.
@@ -25,13 +25,13 @@ public class Resolution implements Serializable {
     }
 
     /**
-     * Converts a resolution to a String 
+     * Converts a resolution to a String
      */
     @Override
     public String toString() {
         return "[" + title + "] " + x + " x " + y;
     }
-    
+
     /*Setter and Getter*/
 
     public int getX() {

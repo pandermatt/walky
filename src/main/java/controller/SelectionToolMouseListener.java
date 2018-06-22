@@ -1,13 +1,14 @@
 package main.java.controller;
 
-import static main.java.controller.PedestrianController.getConvertedMousePosition;
-import java.awt.Point;
-import java.awt.Polygon;
+import main.java.pedestriansimulator.ApplicationSingletone;
+import main.java.pedestriansimulator.Map;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import main.java.pedestriansimulator.ApplicationSingletone;
-import main.java.pedestriansimulator.Map;
+
+import static main.java.controller.PedestrianController.getConvertedMousePosition;
 
 /**
  * Reacts to Mouse- and Keyboardactions to create or expand a selection
@@ -16,9 +17,9 @@ import main.java.pedestriansimulator.Map;
  */
 class SelectionToolMouseListener implements MouseListener, MouseMotionListener, Resetable {
 
-    private Polygon currentSelection;
-    Map map; //the current user-map
+    private final Map map; //the current user-map
     boolean extendMode = false; //extend.mode is activated if the user presses the shift-key
+    private Polygon currentSelection;
 
     /**
      * Creates a new SelectionToolMouseListener
@@ -39,7 +40,6 @@ class SelectionToolMouseListener implements MouseListener, MouseMotionListener, 
         map.setSelection(toAdd, extendMode);
         currentSelection.addPoint(toAdd.x, toAdd.y);
         map.change();
-        return;
     }
 
     @Override

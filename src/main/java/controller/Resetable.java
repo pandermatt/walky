@@ -5,10 +5,10 @@ package main.java.controller;
  *
  * @author Pascal Andermatt, Jan Huber
  */
-public interface Resetable {
+interface Resetable {
 
     /**
      * This method gets called, when a MouseListener is no longer active
      */
-    public void reset();
+    void reset();
 }
