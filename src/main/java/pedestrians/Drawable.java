@@ -65,7 +65,7 @@ public abstract class Drawable implements Serializable {
         this.color = color;
     }
 
-    Color getOriginalColor() {
+    protected Color getOriginalColor() {
         return color;
     }
 }

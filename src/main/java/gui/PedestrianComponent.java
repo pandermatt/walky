@@ -17,13 +17,6 @@ public class PedestrianComponent extends JPanel implements Observer, Serializabl
     public final ZoomMouseListener zoomAndPanListener;
     private boolean init = true; //init is true if no frame was drawn yet
     private final PedestrianPanel panel;
-    //set the points to their default location
-    private Point[] points = {
-            new Point(-100, -100),
-            new Point(-100, 100),
-            new Point(100, -100),
-            new Point(100, 100)
-    };
 
     /**
      * Creates a ZoomAndPanCanvas

@@ -17,7 +17,7 @@ public class PedestrianAnimator {
     //settings
     private final Map currentMap;
     private final int FRAMES_PER_SECOND = 130;
-    private boolean isStopped;
+    private volatile boolean isStopped;
     private boolean wait;
     private int frameCount = 0;
 

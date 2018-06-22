@@ -77,7 +77,7 @@ public class ZoomMouseListener implements MouseListener, MouseMotionListener, Mo
         y *= (1 / transformation.getScaleY());
 
         //return new rounded point
-        return new Point(Math.round((float) x), (int) Math.round(y));
+        return new Point(Math.round((float) (x * 2)), (int) Math.round((y * 2)));//double cursor?
     }
 
 

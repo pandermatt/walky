@@ -48,8 +48,6 @@ public class Graph {
      */
     @Override
     public Graph clone() {
-        Graph graph = (Graph) super.clone();
-
         //Create an empty graph
         HashMap<Point, Node> newData = new HashMap<>();
 
